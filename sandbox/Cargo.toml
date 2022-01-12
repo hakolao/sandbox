@@ -29,3 +29,6 @@ strum_macros = "0.21.1"
 strum = "0.21.0"
 rayon = "1.5.1"
 lazy_static = "1.4.0"
+
+[target.'cfg(windows)'.build-dependencies]
+winres = "0.1"

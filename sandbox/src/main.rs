@@ -1,3 +1,5 @@
+// Turn off console on windows
+#![windows_subsystem = "windows"]
 #![feature(total_cmp)]
 #![feature(slice_group_by)]
 #[macro_use]

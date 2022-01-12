@@ -8,3 +8,9 @@ RemoteSystemsTempFiles
 /assets/matter_definitions.json
 ubuntu_build
 ubuntu_build.zip
+windows_build
+windows_build.zip
+macos_build
+macos_build.ziposxcross
+osxcross
+
