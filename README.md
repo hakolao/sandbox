@@ -22,10 +22,9 @@ TBD
 - More
 
 ## Installation
-Ensure following libs are installed:
 
 ### Windows
-`cmake`, `ninja`, `python` 
+Ensure following libs are installed: `cmake`, `ninja`, `python` 
 
 ### Ubuntu
 ```
