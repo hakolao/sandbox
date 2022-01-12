@@ -7,6 +7,8 @@ if [[ ! "$OSTYPE" == "linux-gnu"* ]]; then
   exit 1
 fi
 
+BUILD_DIR=build
+
 # Assumes we are running thus script on Ubuntu
 
 # Assumes following has been done
@@ -19,12 +21,12 @@ BUILD_UBUNTU_SUCCESS=$?
 
 # Ubuntu dist
 if [ $BUILD_UBUNTU_SUCCESS -eq 0  ]; then
-  mkdir -p ubuntu_build
-  mkdir -p ubuntu_build/assets
-  cp -r assets/object_images ubuntu_build/assets
-  cp target/x86_64-unknown-linux-gnu/release/sandbox ubuntu_build/
-  zip -r ubuntu_build.zip ubuntu_build
-  rm -rf ubuntu_build
+  mkdir -p $BUILD_DIR/ubuntu_build
+  mkdir -p $BUILD_DIR/ubuntu_build/assets
+  cp -r assets/object_images $BUILD_DIR/ubuntu_build/assets
+  cp target/x86_64-unknown-linux-gnu/release/sandbox $BUILD_DIR/ubuntu_build/
+  zip -r $BUILD_DIR/sandbox_ubuntu.zip $BUILD_DIR/ubuntu_build
+  rm -rf $BUILD_DIR/ubuntu_build
 else
   echo "Ubuntu Build failed"
 fi
@@ -39,12 +41,12 @@ BUILD_WINDOWS_SUCCESS=$?
 
 # Windows dist
 if [ $BUILD_WINDOWS_SUCCESS -eq 0  ]; then
-  mkdir -p windows_build
-  mkdir -p windows_build/assets
-  cp -r assets/object_images windows_build/assets
-  cp target/x86_64-pc-windows-gnu/release/sandbox.exe windows_build/
-  zip -r windows_build.zip windows_build
-  rm -rf windows_build
+  mkdir -p $BUILD_DIR/windows_build
+  mkdir -p $BUILD_DIR/windows_build/assets
+  cp -r assets/object_images $BUILD_DIR/windows_build/assets
+  cp target/x86_64-pc-windows-gnu/release/sandbox.exe $BUILD_DIR/windows_build/
+  zip -r $BUILD_DIR/sandbox_windows.zip $BUILD_DIR/windows_build
+  rm -rf $BUILD_DIR/windows_build
 else
   echo "Windows Build failed"
 fi
@@ -67,12 +69,12 @@ cargo build --package sandbox --release --target x86_64-apple-darwin
 BUILD_MACOS_SUCCESS=$?
 # MacOS build
 if [ $BUILD_MACOS_SUCCESS -eq 0  ]; then
-  mkdir -p macos_build
-  mkdir -p macos_build/assets
-  cp -r assets/object_images macos_build/assets
-  cp target/x86_64-apple-darwin/release/sandbox macos_build/
-  zip -r macos_build.zip macos_build
-  rm -rf macos_build
+  mkdir -p $BUILD_DIR/macos_build
+  mkdir -p $BUILD_DIR/macos_build/assets
+  cp -r assets/object_images $BUILD_DIR/macos_build/assets
+  cp target/x86_64-apple-darwin/release/sandbox $BUILD_DIR/macos_build/
+  zip -r $BUILD_DIR/sandbox_macos.zip $BUILD_DIR/macos_build
+  rm -rf $BUILD_DIR/macos_build
 else
   echo "MacOS Build failed"
 fi
