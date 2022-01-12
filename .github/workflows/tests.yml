@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          override: true
+
+      - run: rustup component add rustfmt
+      - name: check rustfmt
+        run: cargo fmt -- --check --color always
+
+      - run: rustup component add clippy
+      - run: cargo fetch
+      - name: cargo clippy
+        run: cargo clippy --all-targets -- -D warnings
+
+  windows_stable:
+    runs-on: windows-latest
+    steps:
+      - name: Ninja Install
+        uses: crazy-max/ghaction-chocolatey@v1.3.1
+        with:
+          args: install ninja
+      - name: Python3 Install
+        uses: crazy-max/ghaction-chocolatey@v1.3.1
+        with:
+          args: install python3 --params "/InstallAllUsers"
+      - uses: actions/checkout@v2
+      - name: Build
+        run: cargo build --verbose --release
+      - name: Run tests
+        run: cargo test --verbose --release
+
+  linux_stable:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        run: cargo build --verbose --release
+      - name: Run tests
+        run: cargo test --verbose --release
+
+  macos_stable:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        run: cargo build --verbose --release
+      - name: Run tests
+        run: cargo test --verbose --release

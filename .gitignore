@@ -1,0 +1,11 @@
+.metadata
+RemoteSystemsTempFiles
+
+/target
+*.log
+.idea/workspace.xml
+/assets/maps/*
+/assets/matter_definitions.json
+build
+osxcross
+

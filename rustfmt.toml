@@ -1,0 +1,14 @@
+# Imports format
+imports_granularity = "Crate"
+group_imports = "StdExternalCrate"
+
+# Code format
+newline_style = "Unix"
+comment_width = 110
+max_width = 100
+format_strings = true
+overflow_delimited_expr = true
+reorder_impl_items = true
+struct_lit_single_line = false
+use_field_init_shorthand = true
+
