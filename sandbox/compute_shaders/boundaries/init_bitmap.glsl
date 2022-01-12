@@ -1,6 +1,6 @@
 #version 450
 
-#include "bitmap_includes.glsl"
+#include "includes.glsl"
 
 void reset_bitmap(ivec2 pos) {
     ivec2 bitmap_pos = ivec2(gl_GlobalInvocationID.xy) / bitmap_ratio;

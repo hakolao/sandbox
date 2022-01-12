@@ -1,6 +1,6 @@
 #version 450
 
-#include "bitmap_includes.glsl"
+#include "includes.glsl"
 
 // Objects are ignored here
 void update_bitmap(ivec2 pos, Matter matter) {

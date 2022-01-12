@@ -195,7 +195,6 @@ impl Renderer {
             .with_title(opts.title)
             .build_vk_surface(event_loop, instance.clone())
             .context("Failed to create vulkan surface & window")?;
-        info!("Window scale factor {}", surface.window().scale_factor());
 
         // Create device
         let (device, graphics_queue, compute_queue) =

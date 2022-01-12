@@ -1,4 +1,4 @@
-const SHADER_DIR: &str = "simulation_shaders";
+const SHADER_DIR: &str = "compute_shaders";
 
 fn main() {
     println!("cargo:rerun-if-changed={}", SHADER_DIR);

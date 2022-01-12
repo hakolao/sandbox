@@ -584,15 +584,7 @@ impl CASimulator {
 mod init_cs {
     vulkano_shaders::shader! {
         ty: "compute",
-        path: "simulation_shaders/init.glsl",
-    }
-}
-
-#[allow(deprecated)]
-mod init_bitmap_cs {
-    vulkano_shaders::shader! {
-        ty: "compute",
-        path: "simulation_shaders/init_bitmap.glsl",
+        path: "compute_shaders/simulation/init.glsl",
     }
 }
 
@@ -600,7 +592,7 @@ mod init_bitmap_cs {
 mod fall_empty_cs {
     vulkano_shaders::shader! {
         ty: "compute",
-        path: "simulation_shaders/fall_empty.glsl",
+        path: "compute_shaders/simulation/fall_empty.glsl",
     }
 }
 
@@ -608,7 +600,7 @@ mod fall_empty_cs {
 mod fall_swap_cs {
     vulkano_shaders::shader! {
         ty: "compute",
-        path: "simulation_shaders/fall_swap.glsl",
+        path: "compute_shaders/simulation/fall_swap.glsl",
     }
 }
 
@@ -616,7 +608,7 @@ mod fall_swap_cs {
 mod rise_empty_cs {
     vulkano_shaders::shader! {
         ty: "compute",
-        path: "simulation_shaders/rise_empty.glsl",
+        path: "compute_shaders/simulation/rise_empty.glsl",
     }
 }
 
@@ -624,7 +616,7 @@ mod rise_empty_cs {
 mod rise_swap_cs {
     vulkano_shaders::shader! {
         ty: "compute",
-        path: "simulation_shaders/rise_swap.glsl",
+        path: "compute_shaders/simulation/rise_swap.glsl",
     }
 }
 
@@ -632,7 +624,7 @@ mod rise_swap_cs {
 mod slide_down_empty_cs {
     vulkano_shaders::shader! {
         ty: "compute",
-        path: "simulation_shaders/slide_down_empty.glsl",
+        path: "compute_shaders/simulation/slide_down_empty.glsl",
     }
 }
 
@@ -640,7 +632,7 @@ mod slide_down_empty_cs {
 mod slide_down_swap_cs {
     vulkano_shaders::shader! {
         ty: "compute",
-        path: "simulation_shaders/slide_down_swap.glsl",
+        path: "compute_shaders/simulation/slide_down_swap.glsl",
     }
 }
 
@@ -648,7 +640,7 @@ mod slide_down_swap_cs {
 mod horizontal_empty_cs {
     vulkano_shaders::shader! {
         ty: "compute",
-        path: "simulation_shaders/horizontal_empty.glsl",
+        path: "compute_shaders/simulation/horizontal_empty.glsl",
     }
 }
 
@@ -656,7 +648,7 @@ mod horizontal_empty_cs {
 mod horizontal_swap_cs {
     vulkano_shaders::shader! {
         ty: "compute",
-        path: "simulation_shaders/horizontal_swap.glsl",
+        path: "compute_shaders/simulation/horizontal_swap.glsl",
     }
 }
 
@@ -664,7 +656,7 @@ mod horizontal_swap_cs {
 mod react_cs {
     vulkano_shaders::shader! {
         ty: "compute",
-        path: "simulation_shaders/react.glsl",
+        path: "compute_shaders/simulation/react.glsl",
     }
 }
 
@@ -672,7 +664,7 @@ mod react_cs {
 mod finish_cs {
     vulkano_shaders::shader! {
         ty: "compute",
-        path: "simulation_shaders/finish.glsl",
+        path: "compute_shaders/simulation/finish.glsl",
     }
 }
 
@@ -680,6 +672,14 @@ mod finish_cs {
 mod update_bitmap_cs {
     vulkano_shaders::shader! {
         ty: "compute",
-        path: "simulation_shaders/update_bitmap.glsl",
+        path: "compute_shaders/boundaries/update_bitmap.glsl",
+    }
+}
+
+#[allow(deprecated)]
+mod init_bitmap_cs {
+    vulkano_shaders::shader! {
+        ty: "compute",
+        path: "compute_shaders/boundaries/init_bitmap.glsl",
     }
 }

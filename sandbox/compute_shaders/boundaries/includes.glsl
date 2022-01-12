@@ -1,3 +1,6 @@
+// Mostly same as ../simulation/includes.glsl, but with different buffer inputs
+// This was separated due to macos molten vk api limiting buffers to 30
+
 // Specialization constants
 layout(constant_id = 0) const uint empty = 1;
 layout(constant_id = 1) const int sim_canvas_size = 1;
@@ -37,7 +40,7 @@ layout(push_constant) uniform PushConstants {
     ivec2 sim_chunk_start_offset;
 } push_constants;
 
-#include "dirs.glsl"
+#include "../simulation/dirs.glsl"
 
 const ivec2 HALF_CANVAS = ivec2(sim_canvas_size / 2);
 
