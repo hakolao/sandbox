@@ -1,0 +1,10 @@
+.metadata
+RemoteSystemsTempFiles
+
+/target
+*.log
+.idea/workspace.xml
+/assets/maps/*
+/assets/matter_definitions.json
+ubuntu_build
+ubuntu_build.zip
