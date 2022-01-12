@@ -13,5 +13,9 @@ fn main() -> io::Result<()> {
             .set_icon("../assets/object_images/wizard.png")
             .compile()?;
     }
+    if std::env::var("MAC_OS_BUILD").is_ok() {
+        println!("cargo:rustc-link-lib=framework=ColorSync");
+    }
+
     Ok(())
 }
