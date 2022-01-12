@@ -3,12 +3,14 @@
 ![Apache](https://img.shields.io/badge/license-Apache-blue.svg)
 
 Sandbox is a pixel physics simulator inspired by other such like [Sandspiel](https://github.com/MaxBittker/sandspiel).
-It's also an exploration project towards creating a pixel physics game similar to [Noita](https://noitagame.com/).
-I'm planning to take learnings from this project while working towards a more usable world building & game editor.
+It's also an exploration / precursor project on an ongoing project to create a pixel physics game similar to [Noita](https://noitagame.com/).
+I'm planning to take learnings from this project while working on a more usable world building & game editor.
 Sandbox is written in Rust.
 
 ![Screenhot](img/screenshot.jpg)
 
+## Download for MacOS, Windows and Ubuntu
+TBD
 
 ## Features
 - Vulkan renderer with [Vulkano](https://github.com/vulkano-rs/vulkano)
@@ -16,7 +18,7 @@ Sandbox is written in Rust.
 - Cellular Automata simulation with Compute Shaders (Why? To see if I can)
 - Deformable pixel objects with Matter from `.png` images
 - Customizable matters & their reactions
-- Physics using [Rapier](https://rapier.rs/)
+- Simple physics using [Rapier](https://rapier.rs/)
 - More
 
 ## Installation
@@ -37,3 +39,6 @@ See [MacOS installation](https://github.com/vulkano-rs/vulkano). Basically you n
 ```sh
 cargo run --package sandbox --release
 ```
+
+# Building Releases
+Run `osxcross_setup.sh`.
