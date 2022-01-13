@@ -3,8 +3,7 @@
 ![Apache](https://img.shields.io/badge/license-Apache-blue.svg)
 
 Sandbox is a pixel physics simulator inspired by other such like [Sandspiel](https://github.com/MaxBittker/sandspiel).
-It's also an exploration / precursor project on an ongoing project to create a pixel physics game similar to [Noita](https://noitagame.com/).
-I'm planning to take learnings from this project while working on a more usable world building & game editor.
+It's also a precursor for an ongoing project to create a pixel physics game similar to [Noita](https://noitagame.com/).
 Sandbox is written in Rust.
 
 ![Screenhot](img/sandbox.gif)
