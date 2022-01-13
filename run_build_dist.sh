@@ -67,7 +67,7 @@ PATH="$(pwd)/osxcross/target/bin:$PATH" \
   LIBZ_SYS_STATIC=1 \
   MAC_OS_BUILD=1 \
   C_INCLUDE_PATH=$(pwd)/osxcross/target/SDK/MacOSX10.15.sdk/usr/include \
-  LIBRARY_PATH="vulkanlibs" \
+  RUSTFLAGS="-C linker=x86_64-apple-darwin19-clang" \
   cargo build --package sandbox --release --target $MACOS
 
 BUILD_MACOS_SUCCESS=$?
