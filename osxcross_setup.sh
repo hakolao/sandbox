@@ -1,14 +1,15 @@
 #!/bin/bash
+# Run with sudo
 
 # https://wapl.es/rust/2019/02/17/rust-cross-compile-linux-to-macos.html
 sudo apt-get install libxml2-dev \
-clang \
-gcc \
-g++ \
-zlib1g-dev \
-libmpc-dev \
-libmpfr-dev \
-libgmp-dev
+  clang \
+  gcc \
+  g++ \
+  zlib1g-dev \
+  libmpc-dev \
+  libmpfr-dev \
+  libgmp-dev
 
 git clone https://github.com/tpoechtrager/osxcross
 cd osxcross

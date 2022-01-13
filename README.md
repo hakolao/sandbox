@@ -46,4 +46,4 @@ cargo run --package sandbox --release
 
 # Building Releases
 
-Run `osxcross_setup.sh`.
+Run `sudo ./osxcross_setup.sh`.
