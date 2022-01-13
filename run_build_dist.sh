@@ -2,7 +2,7 @@
 # stop if there is an error, u complains for undefined vars
 set -eu
 
-APP_NAME=Sandbox
+APP_NAME=sandbox
 UBUNTU=x86_64-unknown-linux-gnu
 WINDOWS=x86_64-pc-windows-gnu
 MACOS=x86_64-apple-darwin
@@ -24,7 +24,7 @@ if [ $BUILD_UBUNTU_SUCCESS -eq 0  ]; then
   mkdir -p $BUILD_DIR/ubuntu_build
   mkdir -p $BUILD_DIR/ubuntu_build/assets
   cp -r assets/object_images $BUILD_DIR/ubuntu_build/assets
-  cp target/$UBUNTU/release/sandbox $BUILD_DIR/ubuntu_build/
+  cp target/$UBUNTU/release/$APP_NAME $BUILD_DIR/ubuntu_build/
   cd $BUILD_DIR
   zip -r sandbox_ubuntu.zip ubuntu_build
   cd ../
@@ -46,7 +46,7 @@ if [ $BUILD_WINDOWS_SUCCESS -eq 0  ]; then
   mkdir -p $BUILD_DIR/windows_build
   mkdir -p $BUILD_DIR/windows_build/assets
   cp -r assets/object_images $BUILD_DIR/windows_build/assets
-  cp target/$WINDOWS/release/sandbox.exe $BUILD_DIR/windows_build/
+  cp target/$WINDOWS/release/$APP_NAME.exe $BUILD_DIR/windows_build/
   cd $BUILD_DIR
   zip -r sandbox_windows.zip windows_build
   cd ../
@@ -66,16 +66,16 @@ PATH="$(pwd)/osxcross/target/bin:$PATH" \
   CC=o64-clang \
   LIBZ_SYS_STATIC=1 \
   MAC_OS_BUILD=1 \
+  C_INCLUDE_PATH=$(pwd)/osxcross/target/SDK/MacOSX10.15.sdk/usr/include
   cargo build --package sandbox --release --target $MACOS
 
 BUILD_MACOS_SUCCESS=$?
 # MacOS build
 if [ $BUILD_MACOS_SUCCESS -eq 0  ]; then
-  mkdir -p $BUILD_DIR/$APP_NAME.app
+  cp -r macos_build_assets/$APP_NAME.app $BUILD_DIR/
   mkdir -p $BUILD_DIR/$APP_NAME.app/assets
   cp -r assets/object_images $BUILD_DIR/$APP_NAME.app/assets
-  cp target/$MACOS/release/sandbox $BUILD_DIR/$APP_NAME.app/
-  cp -r macos_build_assets/Frameworks $BUILD_DIR/$APP_NAME.app/Frameworks
+  cp target/$MACOS/release/$APP_NAME $BUILD_DIR/$APP_NAME.app/
   cd $BUILD_DIR
   zip -r sandbox_macos.zip $APP_NAME.app
   cd ../
