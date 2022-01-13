@@ -10,6 +10,8 @@ use std::{
 
 use anyhow::*;
 use egui_winit_vulkano::texture_from_file;
+#[cfg(target_os = "macos")]
+use vulkano::instance::InstanceCreationError;
 use vulkano::{
     device::{
         physical::{PhysicalDevice, PhysicalDeviceType},
@@ -53,19 +55,35 @@ pub fn create_vk_instance() -> Arc<Instance> {
     };
     // Create instance
     #[cfg(target_os = "macos")]
-    let layers = if std::env::var("VULKAN_VALIDATION").is_ok() {
-        vec!["VK_LAYER_KHRONOS_validation"]
-    } else {
-        vec![]
-    };
+    {
+        let layers = if std::env::var("VULKAN_VALIDATION").is_ok() {
+            vec!["VK_LAYER_KHRONOS_validation"]
+        } else {
+            vec![]
+        };
+        match Instance::new(None, Version::V1_2, &instance_extensions, layers) {
+            Err(e) => {
+                match e {
+                    InstanceCreationError::LoadingError(le) => {
+                        error!("{:?}, Did you install vulkanSDK from https://vulkan.lunarg.com/sdk/home?", le);
+                        Err(le).expect("")
+                    }
+                    _ => Err(e).expect("Failed to create instance"),
+                }
+            }
+            Ok(i) => i,
+        }
+    }
     #[cfg(not(target_os = "macos"))]
-    let layers = if std::env::var("VULKAN_VALIDATION").is_ok() {
-        vec!["VK_LAYER_LUNARG_standard_validation"]
-    } else {
-        vec![]
-    };
-    Instance::new(None, Version::V1_2, &instance_extensions, layers)
-        .expect("Failed to create instance")
+    {
+        let layers = if std::env::var("VULKAN_VALIDATION").is_ok() {
+            vec!["VK_LAYER_LUNARG_standard_validation"]
+        } else {
+            vec![]
+        };
+        Instance::new(None, Version::V1_2, &instance_extensions, layers)
+            .expect("Failed to create instance")
+    }
 }
 
 // Create vk debug call back (to exists outside renderer)

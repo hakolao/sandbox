@@ -66,20 +66,21 @@ PATH="$(pwd)/osxcross/target/bin:$PATH" \
   CC=o64-clang \
   LIBZ_SYS_STATIC=1 \
   MAC_OS_BUILD=1 \
-  C_INCLUDE_PATH=$(pwd)/osxcross/target/SDK/MacOSX10.15.sdk/usr/include
+  C_INCLUDE_PATH=$(pwd)/osxcross/target/SDK/MacOSX10.15.sdk/usr/include \
+  LIBRARY_PATH="vulkanlibs" \
   cargo build --package sandbox --release --target $MACOS
 
 BUILD_MACOS_SUCCESS=$?
 # MacOS build
 if [ $BUILD_MACOS_SUCCESS -eq 0  ]; then
-  cp -r macos_build_assets/$APP_NAME.app $BUILD_DIR/
-  mkdir -p $BUILD_DIR/$APP_NAME.app/assets
-  cp -r assets/object_images $BUILD_DIR/$APP_NAME.app/assets
-  cp target/$MACOS/release/$APP_NAME $BUILD_DIR/$APP_NAME.app/
-  cd $BUILD_DIR
-  zip -r sandbox_macos.zip $APP_NAME.app
-  cd ../
-  rm -rf $BUILD_DIR/$APP_NAME.app
+    mkdir -p $BUILD_DIR/macos_build
+    mkdir -p $BUILD_DIR/macos_build/assets
+    cp -r assets/object_images $BUILD_DIR/macos_build/assets
+    cp target/$MACOS/release/$APP_NAME $BUILD_DIR/macos_build/
+    cd $BUILD_DIR
+    zip -r sandbox_macos.zip macos_build
+    cd ../
+    rm -rf $BUILD_DIR/macos_build
 else
   echo "MacOS Build failed"
 fi
