@@ -66,7 +66,7 @@ lazy_static! {
     pub static ref HALF_CELL: Vector2<f32> = Vector2::new(*CELL_UNIT_SIZE * 0.5, *CELL_UNIT_SIZE * 0.5);
     /// Ratio of bitmap to canvas. If this is 4, bitmap size is (512 / 4) * (512 / 4)
     pub static ref  BITMAP_RATIO: u32 = if std::env::var("LARGE").is_ok() { 8 } else { 4 };
-    /// Ratio with which we must adjust the vertices of solid boundaries to correctly position them
+    /// Ratio with which we must adjust the vertices of solid utils to correctly position them
     pub static ref  BITMAP_PIXEL_TO_CANVAS_RATIO: f64 =
         WORLD_UNIT_SIZE as f64 / (*SIM_CANVAS_SIZE / *BITMAP_RATIO) as f64;
 }

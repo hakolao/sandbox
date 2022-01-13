@@ -9,6 +9,14 @@ void reset_bitmap(ivec2 pos) {
     bitmap[bitmap_index] = 0;
 }
 
+void save_object_matter_to_tmp(ivec2 pos) {
+    Matter matter = read_matter(pos);
+    if (is_object(matter)) {
+        tmp_matter[get_index(ivec2(gl_GlobalInvocationID.xy))] = get_matter_in(pos);
+    }
+}
+
 void main() {
     reset_bitmap(get_current_sim_pos());
+    save_object_matter_to_tmp(get_current_sim_pos());
 }

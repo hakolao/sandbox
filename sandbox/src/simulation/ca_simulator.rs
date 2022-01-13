@@ -24,9 +24,7 @@ use crate::{
 
 pub struct CASimulator {
     pub comp_queue: Arc<Queue>,
-    // Kernels
-    init_pipeline: Arc<ComputePipeline>,
-    init_bitmap_pipeline: Arc<ComputePipeline>,
+    // Simulation pipelines (Could also be one pipeline with multiple entry points... :D)
     fall_empty_pipeline: Arc<ComputePipeline>,
     fall_swap_pipeline: Arc<ComputePipeline>,
     rise_empty_pipeline: Arc<ComputePipeline>,
@@ -36,8 +34,11 @@ pub struct CASimulator {
     horizontal_empty_pipeline: Arc<ComputePipeline>,
     horizontal_swap_pipeline: Arc<ComputePipeline>,
     react_pipeline: Arc<ComputePipeline>,
-    finish_pipeline: Arc<ComputePipeline>,
+    color_pipeline: Arc<ComputePipeline>,
+    // Utility pipelines
+    init_pipeline: Arc<ComputePipeline>,
     update_bitmap_pipeline: Arc<ComputePipeline>,
+    finish_pipeline: Arc<ComputePipeline>,
     // Shader matter inputs
     matter_color_input: Arc<CpuAccessibleBuffer<[u32]>>,
     matter_state_input: Arc<CpuAccessibleBuffer<[u32]>>,
@@ -112,26 +113,6 @@ impl CASimulator {
             constant_12: KERNEL_SIZE,
         };
 
-        let init_pipeline = {
-            let shader = init_cs::load(comp_queue.device().clone())?;
-            ComputePipeline::new(
-                comp_queue.device().clone(),
-                shader.entry_point("main").unwrap(),
-                &spec_const,
-                None,
-                |_| {},
-            )?
-        };
-        let init_bitmap_pipeline = {
-            let shader = init_bitmap_cs::load(comp_queue.device().clone())?;
-            ComputePipeline::new(
-                comp_queue.device().clone(),
-                shader.entry_point("main").unwrap(),
-                &spec_const,
-                None,
-                |_| {},
-            )?
-        };
         let fall_empty_pipeline = {
             let shader = fall_empty_cs::load(comp_queue.device().clone())?;
             ComputePipeline::new(
@@ -222,6 +203,26 @@ impl CASimulator {
                 |_| {},
             )?
         };
+        let color_pipeline = {
+            let shader = color_cs::load(comp_queue.device().clone())?;
+            ComputePipeline::new(
+                comp_queue.device().clone(),
+                shader.entry_point("main").unwrap(),
+                &spec_const,
+                None,
+                |_| {},
+            )?
+        };
+        let init_pipeline = {
+            let shader = init_cs::load(comp_queue.device().clone())?;
+            ComputePipeline::new(
+                comp_queue.device().clone(),
+                shader.entry_point("main").unwrap(),
+                &spec_const,
+                None,
+                |_| {},
+            )?
+        };
         let finish_pipeline = {
             let shader = finish_cs::load(comp_queue.device().clone())?;
             ComputePipeline::new(
@@ -245,8 +246,6 @@ impl CASimulator {
 
         Ok(CASimulator {
             comp_queue,
-            init_pipeline,
-            init_bitmap_pipeline,
             fall_empty_pipeline,
             fall_swap_pipeline,
             rise_empty_pipeline,
@@ -256,8 +255,11 @@ impl CASimulator {
             horizontal_empty_pipeline,
             horizontal_swap_pipeline,
             react_pipeline,
-            finish_pipeline,
+            color_pipeline,
+
+            init_pipeline,
             update_bitmap_pipeline,
+            finish_pipeline,
 
             matter_color_input,
             matter_state_input,
@@ -381,10 +383,9 @@ impl CASimulator {
         )?;
 
         // Inits
-        self.dispatch(&mut builder, self.init_pipeline.clone(), &mut world_chunks)?;
-        self.dispatch_bitmap_specific(
+        self.dispatch_utility(
             &mut builder,
-            self.init_bitmap_pipeline.clone(),
+            self.init_pipeline.clone(),
             &mut world_chunks,
         )?;
 
@@ -412,19 +413,23 @@ impl CASimulator {
         // ------
 
         // React
-        self.dispatch(&mut builder, self.react_pipeline.clone(), &mut world_chunks)?;
+        self.dispatch(&mut builder, self.react_pipeline.clone(), &mut world_chunks, true)?;
 
         // Finish
-        self.dispatch(
+        self.dispatch_utility(
             &mut builder,
             self.finish_pipeline.clone(),
             &mut world_chunks,
         )?;
-        // This will clear tmp as well
-        self.dispatch_bitmap_specific(
+        self.dispatch_utility(
             &mut builder,
             self.update_bitmap_pipeline.clone(),
             &mut world_chunks,
+        )?;
+        self.dispatch(
+            &mut builder,
+            self.color_pipeline.clone(),
+            &mut world_chunks, false
         )?;
 
         let command_buffer = builder.build()?;
@@ -445,18 +450,18 @@ impl CASimulator {
     ) -> Result<()> {
         self.move_step = step;
         // Anything that falls
-        self.dispatch(builder, self.fall_empty_pipeline.clone(), world_chunks)?;
-        self.dispatch(builder, self.fall_swap_pipeline.clone(), world_chunks)?;
+        self.dispatch(builder, self.fall_empty_pipeline.clone(), world_chunks, true)?;
+        self.dispatch(builder, self.fall_swap_pipeline.clone(), world_chunks, true)?;
         // Risers
-        self.dispatch(builder, self.rise_empty_pipeline.clone(), world_chunks)?;
-        self.dispatch(builder, self.rise_swap_pipeline.clone(), world_chunks)?;
+        self.dispatch(builder, self.rise_empty_pipeline.clone(), world_chunks, true)?;
+        self.dispatch(builder, self.rise_swap_pipeline.clone(), world_chunks, true)?;
         // Sliders
         self.dispatch(
             builder,
             self.slide_down_empty_pipeline.clone(),
-            world_chunks,
+            world_chunks, true
         )?;
-        self.dispatch(builder, self.slide_down_swap_pipeline.clone(), world_chunks)?;
+        self.dispatch(builder, self.slide_down_swap_pipeline.clone(), world_chunks, true)?;
         Ok(())
     }
 
@@ -473,9 +478,9 @@ impl CASimulator {
             self.dispatch(
                 builder,
                 self.horizontal_empty_pipeline.clone(),
-                world_chunks,
+                world_chunks, true
             )?;
-            self.dispatch(builder, self.horizontal_swap_pipeline.clone(), world_chunks)?;
+            self.dispatch(builder, self.horizontal_swap_pipeline.clone(), world_chunks, true)?;
         }
         Ok(())
     }
@@ -485,6 +490,7 @@ impl CASimulator {
         builder: &mut AutoCommandBufferBuilder<PrimaryAutoCommandBuffer>,
         pipeline: Arc<ComputePipeline>,
         world_chunks: &mut (Vector2<i32>, Vec<GpuChunk>),
+        swap: bool,
     ) -> Result<()> {
         let pipeline_layout = pipeline.layout();
         let desc_layout = pipeline_layout.descriptor_set_layouts().get(0).unwrap();
@@ -507,11 +513,11 @@ impl CASimulator {
             desc_set_builder.add_buffer(chunks[i].objects_color.clone())?;
             desc_set_builder.add_image(chunks[i].image.clone())?;
         }
-        desc_set_builder.add_buffer(self.tmp_matter.clone())?;
         let set = desc_set_builder.build()?;
 
         // Note that we make an assumption here that PCs are same for all our simulation kernel (see `shared.glsl`)
-        let push_constants = finish_cs::ty::PushConstants {
+        // hence react_cs::...
+        let push_constants = react_cs::ty::PushConstants {
             seed: self.seed,
             sim_step: self.sim_steps as u32,
             move_step: self.move_step as u32,
@@ -530,18 +536,20 @@ impl CASimulator {
                 *SIM_CANVAS_SIZE / KERNEL_SIZE,
                 1,
             ])?;
-        for i in 0..4 {
-            // Swap matter in & out
-            let temp = chunks[i].matter_out.clone();
-            chunks[i].matter_out = chunks[i].matter_in.clone();
-            chunks[i].matter_in = temp;
+        if swap {
+            for i in 0..4 {
+                // Swap matter in & out
+                let temp = chunks[i].matter_out.clone();
+                chunks[i].matter_out = chunks[i].matter_in.clone();
+                chunks[i].matter_in = temp;
+            }
         }
 
         Ok(())
     }
 
     /// Why this? Because macos doesn't allow > 30 buffer inputs
-    fn dispatch_bitmap_specific(
+    fn dispatch_utility(
         &mut self,
         builder: &mut AutoCommandBufferBuilder<PrimaryAutoCommandBuffer>,
         bitmap_pipeline: Arc<ComputePipeline>,
@@ -557,12 +565,14 @@ impl CASimulator {
         let (chunk_start, chunks) = world_chunks;
         for i in 0..4 {
             desc_set_builder.add_buffer(chunks[i].matter_in.clone())?;
+            desc_set_builder.add_buffer(chunks[i].matter_out.clone())?;
+            desc_set_builder.add_buffer(chunks[i].objects_matter.clone())?;
         }
         desc_set_builder.add_buffer(self.tmp_matter.clone())?;
         let set = desc_set_builder.build()?;
 
         // Note that we make an assumption here that PCs are same for all our simulation kernel (see `shared.glsl`)
-        let push_constants = init_bitmap_cs::ty::PushConstants {
+        let push_constants = init_cs::ty::PushConstants {
             sim_pos_offset: self.sim_pos_offset.into(),
             sim_chunk_start_offset: (*chunk_start).into(),
         };
@@ -577,14 +587,6 @@ impl CASimulator {
             ])?;
 
         Ok(())
-    }
-}
-
-#[allow(deprecated)]
-mod init_cs {
-    vulkano_shaders::shader! {
-        ty: "compute",
-        path: "compute_shaders/simulation/init.glsl",
     }
 }
 
@@ -661,10 +663,18 @@ mod react_cs {
 }
 
 #[allow(deprecated)]
-mod finish_cs {
+mod color_cs {
     vulkano_shaders::shader! {
         ty: "compute",
-        path: "compute_shaders/simulation/finish.glsl",
+        path: "compute_shaders/simulation/color.glsl",
+    }
+}
+
+#[allow(deprecated)]
+mod init_cs {
+    vulkano_shaders::shader! {
+        ty: "compute",
+        path: "compute_shaders/utils/init.glsl",
     }
 }
 
@@ -672,14 +682,14 @@ mod finish_cs {
 mod update_bitmap_cs {
     vulkano_shaders::shader! {
         ty: "compute",
-        path: "compute_shaders/boundaries/update_bitmap.glsl",
+        path: "compute_shaders/utils/update_bitmap.glsl",
     }
 }
 
 #[allow(deprecated)]
-mod init_bitmap_cs {
+mod finish_cs {
     vulkano_shaders::shader! {
         ty: "compute",
-        path: "compute_shaders/boundaries/init_bitmap.glsl",
+        path: "compute_shaders/utils/finish.glsl",
     }
 }

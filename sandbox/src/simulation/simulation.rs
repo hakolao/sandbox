@@ -98,7 +98,7 @@ impl Simulation {
     /*
     1. Write objects to CA grid
     2. Step CA (multiple steps if needed). Updates solid etc. bitmaps
-    3. Form contours & physics boundaries from CA Grid
+    3. Form contours & physics utils from CA Grid
     4. Step physics simulation
     */
     pub fn step(

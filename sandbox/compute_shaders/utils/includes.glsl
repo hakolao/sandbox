@@ -29,11 +29,22 @@ layout(set = 0, binding = 2) buffer BitmapBuffer { uint bitmap[]; };
 Matter data chunks
 */
 layout(set = 0, binding = 3) buffer MatterInBuffer0 { uint matter_in0[]; };
-layout(set = 0, binding = 4) buffer MatterInBuffer1 { uint matter_in1[]; };
-layout(set = 0, binding = 5) buffer MatterInBuffer2 { uint matter_in2[]; };
-layout(set = 0, binding = 6) buffer MatterInBuffer3 { uint matter_in3[]; };
+layout(set = 0, binding = 4) buffer MatterOutBuffer0 { uint matter_out0[]; };
+layout(set = 0, binding = 5) buffer ObjectsMatter0 { uint objects_matter0[]; };
 
-layout(set = 0, binding = 7) buffer TmpMatter { uint tmp_matter[]; };
+layout(set = 0, binding = 6) buffer MatterInBuffer1 { uint matter_in1[]; };
+layout(set = 0, binding = 7) buffer MatterOutBuffer1 { uint matter_out1[]; };
+layout(set = 0, binding = 8) buffer ObjectsMatter1 { uint objects_matter1[]; };
+
+layout(set = 0, binding = 9) buffer MatterInBuffer2 { uint matter_in2[]; };
+layout(set = 0, binding = 10) buffer MatterOutBuffer2 { uint matter_out2[]; };
+layout(set = 0, binding = 11) buffer ObjectsMatter2 { uint objects_matter2[]; };
+
+layout(set = 0, binding = 12) buffer MatterInBuffer3 { uint matter_in3[]; };
+layout(set = 0, binding = 13) buffer MatterOutBuffer3 { uint matter_out3[]; };
+layout(set = 0, binding = 14) buffer ObjectsMatter3 { uint objects_matter3[]; };
+
+layout(set = 0, binding = 15) buffer TmpMatter { uint tmp_matter[]; };
 
 layout(push_constant) uniform PushConstants {
     ivec2 sim_pos_offset;
@@ -93,6 +104,50 @@ uint get_matter_in(ivec2 pos) {
     return matter_in0[index];
 }
 
+uint get_objects_matter(ivec2 pos) {
+    int index = get_index(get_pos_inside_chunk(pos));
+    int chunk_index = get_chunk_index(pos);
+    if (chunk_index == 0) {
+        return objects_matter0[index];
+    } else if (chunk_index == 1) {
+        return objects_matter1[index];
+    } else if (chunk_index == 2) {
+        return objects_matter2[index];
+    } else if (chunk_index == 3) {
+        return objects_matter3[index];
+    }
+    return objects_matter0[index];
+}
+
+Matter read_matter(ivec2 pos) {
+    uint obj_matter = get_objects_matter(pos);
+    if (obj_matter != empty) {
+        Matter matter = new_matter(obj_matter);
+        matter.state = state_object;
+        return matter;
+    } else {
+        return new_matter(get_matter_in(pos));
+    }
+}
+
+void write_matter_both(ivec2 pos, Matter matter) {
+    int index = get_index(get_pos_inside_chunk(pos));
+    int chunk_index = get_chunk_index(pos);
+    if (chunk_index == 0) {
+        matter_in0[index] = matter.matter;
+        matter_out0[index] = matter.matter;
+    } else if (chunk_index == 1) {
+        matter_in1[index] = matter.matter;
+        matter_out1[index] = matter.matter;
+    } else if (chunk_index == 2) {
+        matter_in2[index] = matter.matter;
+        matter_out2[index] = matter.matter;
+    } else if (chunk_index == 3) {
+        matter_in3[index] = matter.matter;
+        matter_out3[index] = matter.matter;
+    }
+}
+
 bool is_inside_sim_canvas(ivec2 pos) {
     ivec2 local_pos = get_local_pos(pos);
     return local_pos.x >= 0 && local_pos.x < sim_canvas_size &&
@@ -110,6 +165,10 @@ Matter get_neighbor_ignore_objects(ivec2 pos, int dir) {
     } else {
         return new_matter(empty);
     }
+}
+
+bool is_object(Matter matter) {
+    return matter.state == state_object;
 }
 
 bool is_solid(Matter matter) {

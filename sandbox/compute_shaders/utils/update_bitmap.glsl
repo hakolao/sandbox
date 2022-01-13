@@ -20,6 +20,4 @@ void main() {
     ivec2 pos = get_current_sim_pos();
     Matter matter = new_matter(get_matter_in(pos));
     update_bitmap(pos, matter);
-    // Clear tmp grid
-    tmp_matter[get_index(ivec2(gl_GlobalInvocationID.xy))] = empty;
 }

@@ -69,8 +69,6 @@ layout(set = 0, binding = 26) buffer ObjectsMatter3 { uint objects_matter3[]; };
 layout(set = 0, binding = 27) buffer ObjectsColor3 { uint objects_color3[]; };
 layout(set = 0, binding = 28, rgba8) uniform writeonly image2D canvas_img3;
 
-layout(set = 0, binding = 29) buffer TmpMatter { uint tmp_matter[]; };
-
 layout(push_constant) uniform PushConstants {
     float seed;
     uint sim_step;

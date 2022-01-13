@@ -68,7 +68,7 @@ pub fn draw_contours(
             }
         }
     }
-    // Polylines (boundaries)
+    // Polylines (utils)
     lines.extend(get_boundary_contour_lines(
         ecs_world,
         physics_world,
