@@ -490,7 +490,8 @@ impl Simulation {
                                     let colliders = contours
                                         .iter()
                                         .filter_map(|ring| {
-                                            if ring.len() > 2 {
+                                            // This is important, otherwise physics calculation on rapier's side will crash: See: https://github.com/hakolao/sandbox/issues/1
+                                            if ring.len() > 3 {
                                                 Some(collider_from_convex_decomposition(ring))
                                             } else {
                                                 None
