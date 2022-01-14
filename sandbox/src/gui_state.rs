@@ -415,6 +415,8 @@ impl GuiState {
                 ui.label("Key 3: Paint object mode");
                 ui.label("Key 4: Drag object mode");
                 ui.label("Key F: Toggle Fullscreen");
+                ui.label("Key Space: Pause Simulation");
+                ui.label("Key Enter: Step Simulation");
                 ui.separator();
                 ui.label("Mouse:");
                 ui.separator();
