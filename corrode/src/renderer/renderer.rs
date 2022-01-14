@@ -722,35 +722,3 @@ pub fn create_device_image_with_usage(
         Some(queue.family()),
     )?)?)
 }
-
-#[cfg(test)]
-mod test {
-    use vulkano::{
-        format::Format,
-        image::{ImageDimensions, ImmutableImage, MipmapsCount},
-    };
-
-    use crate::renderer::render_test_helper::test_setup;
-
-    #[test]
-    fn test_debug_layer() {
-        let (_device, gfx_queue, _dbg) = test_setup();
-
-        // Create an image in order to generate some additional logging:
-        let pixel_format = Format::R8G8B8A8_UINT;
-        let dimensions = ImageDimensions::Dim2d {
-            width: 4096,
-            height: 4096,
-            array_layers: 1,
-        };
-        const DATA: [[u8; 4]; 4096 * 4096] = [[0; 4]; 4096 * 4096];
-        let _ = ImmutableImage::from_iter(
-            DATA.iter().cloned(),
-            dimensions,
-            MipmapsCount::One,
-            pixel_format,
-            gfx_queue,
-        )
-        .unwrap();
-    }
-}

@@ -135,36 +135,3 @@ mod fs {
         path: "shaders/basic_frag.glsl"
     }
 }
-
-#[cfg(test)]
-mod test {
-    use vulkano::{format::Format, render_pass::Subpass};
-
-    use crate::renderer::{pipelines::LineDrawPipeline, render_test_helper::test_setup};
-
-    // A quick pipeline creation test to be run on different systems (why? because of problems on macos)
-    #[test]
-    fn test_pipeline_creation() {
-        let (device, gfx_queue, _dbg) = test_setup();
-        let render_pass = vulkano::ordered_passes_renderpass!(device,
-            attachments: {
-                final_color: {
-                    load: Clear,
-                    store: Store,
-                    format: Format::R8G8B8A8_UNORM,
-                    samples: 1,
-                }
-            },
-            passes: [
-                {
-                    color: [final_color],
-                    depth_stencil: {},
-                    input: []
-                }
-            ]
-        )
-        .unwrap();
-        let subpass = Subpass::from(render_pass, 0).unwrap();
-        let _line_draw_pipeline = LineDrawPipeline::new(gfx_queue, subpass).unwrap();
-    }
-}

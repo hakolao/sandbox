@@ -25,6 +25,7 @@ mod render_test_helper {
         Version,
     };
 
+    #[allow(unused)]
     pub fn test_setup() -> (Arc<Device>, Arc<Queue>, DebugCallback) {
         let layers = vec![];
         let _instance = Instance::new(
