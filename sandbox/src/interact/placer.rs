@@ -14,7 +14,7 @@ use crate::{
 
 pub struct EditorPlacer {
     pub object_matter: u32,
-    pub place_object: String,
+    pub place_object: Option<String>,
     pub obj_image_assets: BTreeMap<String, Arc<BitmapImage>>,
     pub object_image_texture_ids: BTreeMap<String, TextureId>,
     pub bitmap_image: Option<BitmapImage>,
@@ -28,11 +28,16 @@ impl EditorPlacer {
         simulation: &mut Simulation,
         mouse_world_pos: Vector2<f32>,
     ) -> Result<()> {
+        if self.place_object.is_none() {
+            return Ok(());
+        }
         if world_pos_inside_canvas(mouse_world_pos, simulation.camera_pos) {
             simulation.add_dynamic_pixel_object(
                 ecs_world,
                 physics_world,
-                self.obj_image_assets.get(&self.place_object).unwrap(),
+                self.obj_image_assets
+                    .get(self.place_object.as_ref().unwrap())
+                    .unwrap(),
                 self.object_matter,
                 Vector2::new(mouse_world_pos.x, mouse_world_pos.y),
                 Vector2::new(0.0, 0.0),
@@ -97,6 +102,7 @@ impl EditorPlacer {
 pub fn get_object_image_files() -> Result<BTreeMap<String, Arc<BitmapImage>>> {
     let mut object_images = BTreeMap::new();
     let dir_path = current_dir()?.join("assets/object_images");
+    fs::create_dir_all(dir_path.clone()).unwrap();
     for file in fs::read_dir(dir_path.clone()).unwrap() {
         let file = file?.file_name();
         let file_name = file.to_str().unwrap();

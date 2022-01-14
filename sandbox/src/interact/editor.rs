@@ -78,7 +78,7 @@ impl Editor {
             },
             placer: EditorPlacer {
                 object_matter: MATTER_WOOD,
-                place_object: obj_images.keys().next().unwrap().clone(),
+                place_object: obj_images.keys().next().cloned(),
                 obj_image_assets: obj_images,
                 object_image_texture_ids: BTreeMap::new(),
                 bitmap_image: None,

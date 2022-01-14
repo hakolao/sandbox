@@ -544,8 +544,13 @@ impl GuiState {
                     add_matter_palette(ui, simulation, editor);
                 } else if editor.mode == EditorMode::Place {
                     ui.separator();
-                    ui.label(format!("Object ({})", editor.placer.place_object));
-                    add_object_palette(ui, editor);
+                    if let Some(object) = &editor.placer.place_object {
+                        ui.label(format!("Object ({})", object));
+                        add_object_palette(ui, editor);
+                    } else {
+                        ui.label("Object (None)");
+                        ui.label("Add .png images to assets/object_images");
+                    }
                     ui.separator();
                     ui.label(format!(
                         "Object Matter ({})",
@@ -712,7 +717,7 @@ fn add_object_palette(ui: &mut Ui, editor: &mut Editor) {
             let btn = ImageButton::new(*val, button_size);
             ui.horizontal(|ui| {
                 if ui.add(btn).on_hover_text(key).clicked() {
-                    *object = key.clone();
+                    *object = Some(key.clone());
                 }
                 ui.label(key);
             });
