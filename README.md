@@ -23,7 +23,7 @@ MacOS release build still requires VulkanSDK to be installed and libs found in `
 - Simple physics using [Rapier](https://rapier.rs/)
 - More
 
-## Installation
+## Development
 
 ### Windows
 
@@ -45,6 +45,11 @@ See [MacOS installation](https://github.com/vulkano-rs/vulkano). Basically you n
 cargo run --package sandbox --release
 ```
 
-# Building Releases on Ubuntu
+Run tests & checks with `./run_checks.sh` before pushing & making a PR.
 
-Run `sudo ./osxcross_setup.sh`.
+# Building Cross Compiled Releases on Ubuntu
+
+Run `run_build_dist.sh`.
+
+### Notes
+I'd be very happy to see improvement suggestions.
