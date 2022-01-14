@@ -10,8 +10,7 @@ It's also a precursor for an ongoing game project. Sandbox is written in Rust.
 
 ## Download for MacOS, Windows and Ubuntu
 
-TBD.
-
+Download from [Releases](https://github.com/hakolao/sandbox/releases).
 MacOS release build still requires VulkanSDK to be installed and libs found in `/usr/local/lib`. Linux and Windows should work as is.
 
 ## Features
