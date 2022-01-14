@@ -95,12 +95,11 @@ impl Simulation {
         Ok(())
     }
 
-    /*
-    1. Write objects to CA grid
-    2. Step CA (multiple steps if needed). Updates solid etc. bitmaps
-    3. Form contours & physics utils from CA Grid
-    4. Step physics simulation
-    */
+    /// 1. Write objects to CA grid
+    /// 2. Step CA (multiple steps if needed). Updates solid etc. bitmaps
+    /// 3. Remove object pixels from grid
+    /// 4. Form contours for new deformed physics objects
+    /// 5. Step physics simulation
     pub fn step(
         &mut self,
         api: &mut EngineApi<InputAction>,
@@ -147,6 +146,7 @@ impl Simulation {
         Ok(())
     }
 
+    /// Update object ecs data after physics calculation
     fn update_dynamic_physics_objects(&mut self, api: &mut EngineApi<InputAction>) -> Result<()> {
         let EngineApi {
             ecs_world,

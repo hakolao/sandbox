@@ -1,13 +1,5 @@
 use cgmath::Vector2;
 
-/// A B C D
-pub const VERTICES_PER_QUAD: usize = 4;
-/// 0, 2, 1, 0, 3, 2
-pub const INDICES_PER_QUAD: usize = 6;
-
-/// 0, 1, 1, 2, 2, 3, 3, 4 (Line list)
-pub const VERTICES_PER_LINE: usize = 2;
-
 /// Vertex for textured quads
 #[repr(C)]
 #[derive(Default, Debug, Clone, Copy)]

@@ -12,6 +12,7 @@ use vulkano::{
 
 use crate::renderer::{pipelines::FullFrameImagePipeline, DeviceImageView, FinalImageView};
 
+/// A simple render pass that places an image filling the whole frame
 pub struct RenderPassPlaceOverFrame {
     gfx_queue: Arc<Queue>,
     render_pass: Arc<RenderPass>,

@@ -53,6 +53,7 @@ fn depth_first_label_mark(
 }
 
 /// Go through inputted bitmap & extract new bitmaps of connected pixels (components)
+/// See: https://en.wikipedia.org/wiki/Connected-component_labeling
 pub fn extract_connected_components_from_bitmap(
     bitmap: &[f64],
     width: u32,

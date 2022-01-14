@@ -177,6 +177,9 @@ impl GpuChunk {
     }
 }
 
+/// The purpose of this manager is to organize map chunk loading and unloading when camera is moved
+/// This is required for a potential endless 2d world. In this simulator it's not that useful though.
+/// More like a tech demo part.
 pub struct SimulationChunkManager {
     pub queue: Arc<Queue>,
     canvas_pos: Vector2<i32>,

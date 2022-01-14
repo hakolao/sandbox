@@ -33,7 +33,7 @@ use corrode::{
 use simplelog::LevelFilter;
 use winit::event::VirtualKeyCode;
 
-use crate::app::{App, InputAction};
+use crate::app::{InputAction, SandboxApp};
 
 /// This is an example for using doc comment attributes
 /// Canvas plane scale (1.0 means our world is between -1.0 and 1.0)
@@ -90,7 +90,7 @@ fn main() -> Result<()> {
     initialize_logger(LevelFilter::Info)?;
 
     Corrode::run(
-        App::new()?,
+        SandboxApp::new()?,
         EngineOptions {
             render_options: RenderOptions {
                 v_sync: false,

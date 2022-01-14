@@ -35,6 +35,7 @@ pub struct Pipelines {
 }
 
 /// System that contains the necessary facilities for rendering a single frame.
+/// This is a stripped down version of https://github.com/vulkano-rs/vulkano/blob/master/examples/src/bin/deferred/main.rs
 pub struct RenderPassDeferred {
     gfx_queue: Arc<Queue>,
     render_pass: Arc<RenderPass>,

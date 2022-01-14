@@ -31,24 +31,27 @@ pub enum InputAction {
     ToggleFullScreen,
 }
 
-pub struct App {
+pub struct SandboxApp {
+    // Main structs
     simulation: Option<Simulation>,
     editor: Editor,
     gui_state: GuiState,
     settings: AppSettings,
+    // Bools
     is_running_simulation: bool,
     is_step: bool,
     is_debug: bool,
     time_since_last_step: f64,
     time_since_last_perf: f64,
+    // Performance metrics
     simulation_timer: PerformanceTimer,
     render_timer: PerformanceTimer,
     frame_timer: PerformanceTimer,
 }
 
-impl App {
-    pub fn new() -> Result<App> {
-        Ok(App {
+impl SandboxApp {
+    pub fn new() -> Result<SandboxApp> {
+        Ok(SandboxApp {
             simulation: None,
             editor: Editor::new()?,
             gui_state: GuiState::new(),
@@ -84,6 +87,7 @@ impl App {
         log_world_performance(self.simulation.as_ref().unwrap());
     }
 
+    /// Step the simulation
     pub fn step(&mut self, api: &mut EngineApi<InputAction>) -> Result<()> {
         self.simulation_timer.start();
         let canvas_mouse_state = CanvasMouseState::new(&api.main_camera, &api.inputs[0]);
@@ -97,39 +101,47 @@ impl App {
     }
 }
 
-impl Engine<InputAction> for App {
+impl Engine<InputAction> for SandboxApp {
     fn start<E>(
         &mut self,
         _event_loop: &EventLoop<E>,
         api: &mut EngineApi<InputAction>,
     ) -> Result<()> {
+        // Zoom to desired level
         api.main_camera.zoom_to_fit_canvas(WORLD_UNIT_SIZE);
+        // Read matter definitions
         let matter_definitions = if let Some(defs) = read_matter_definitions_file() {
             defs
         } else {
             default_matter_definitions()
         };
         validate_matter_definitions(&matter_definitions);
+        // Create simulator
         self.simulation = Some(Simulation::new(
             api.renderer.compute_queue(),
             matter_definitions,
             api.renderer.image_format(),
         )?);
+        // Register gui images (for editor windows in gui)
         self.editor
             .register_gui_images(api, self.simulation.as_ref().unwrap());
+        // Update settings based on read information from renderer
         self.settings
             .update_based_on_device_info_and_env(&api.renderer);
+        // Toggle fullscreen
         api.renderer.toggle_fullscreen();
         Ok(())
     }
 
     fn update(&mut self, api: &mut EngineApi<InputAction>) -> Result<()> {
+        // Update editor & handle inputs there
         self.editor.update(
             api,
             self.simulation.as_mut().unwrap(),
             &mut self.is_running_simulation,
             &mut self.is_step,
         )?;
+        // Step if desired
         if self.should_step() {
             if self.is_running_simulation {
                 self.step(api)?;
@@ -174,7 +186,9 @@ impl Engine<InputAction> for App {
         while let Some(pass) = frame.next_pass()? {
             after_future = match pass {
                 Pass::Deferred(mut dp) => {
+                    // Render canvas first
                     draw_canvas(simulation, &mut dp)?;
+                    // Debug renders
                     if self.is_debug {
                         draw_contours(ecs_world, physics_world, simulation, &mut dp)?;
                         draw_grid(simulation, &mut dp, [0.5; 4])?;
@@ -185,6 +199,7 @@ impl Engine<InputAction> for App {
                             ])?;
                         }
                     }
+                    // Render line from dragged object
                     if let Some((obj_id, _)) = self.editor.dragger.dragged_object {
                         ecs_world
                             .query_one::<(&Position, &Angle)>(obj_id)
@@ -200,6 +215,7 @@ impl Engine<InputAction> for App {
                             });
                     }
 
+                    // Render circle when painting
                     if self.editor.mode == EditorMode::Paint
                         || self.editor.mode == EditorMode::ObjectPaint
                     {
@@ -220,6 +236,7 @@ impl Engine<InputAction> for App {
                         dp.draw_circle(pos, radius, color_f32)?;
                     }
 
+                    // Draw painted object image
                     if self.editor.mode == EditorMode::ObjectPaint
                         && self.editor.draw_state.started()
                     {
@@ -237,7 +254,7 @@ impl Engine<InputAction> for App {
     }
 
     fn gui_content(&mut self, api: &mut EngineApi<InputAction>) -> Result<()> {
-        let App {
+        let SandboxApp {
             simulation: simulator,
             gui_state,
             is_running_simulation,
