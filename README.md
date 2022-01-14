@@ -3,9 +3,8 @@
 ![CI](https://github.com/hakolao/sandbox/workflows/CI/badge.svg)
 ![Apache](https://img.shields.io/badge/license-Apache-blue.svg)
 
-Sandbox is a pixel physics simulator inspired by other such like [Sandspiel](https://github.com/MaxBittker/sandspiel).
-It's also a precursor for an ongoing project to create a pixel physics game similar to [Noita](https://noitagame.com/).
-Sandbox is written in Rust.
+Sandbox is a pixel physics simulator inspired by other such like [Sandspiel](https://github.com/MaxBittker/sandspiel) and [Noita](https://noitagame.com/).
+It's also a precursor for an ongoing game project. Sandbox is written in Rust.
 
 ![Screenhot](img/sandbox.gif)
 
