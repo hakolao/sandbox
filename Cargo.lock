@@ -1324,7 +1324,7 @@ dependencies = [
 [[package]]
 name = "parry2d"
 version = "0.7.1"
-source = "git+https://github.com/hakolao/parry#d6629d0ecf1c7ebbfc22fb18fe9c2f5b892c1820"
+source = "git+https://github.com/hakolao/parry?branch=try-fixing-crash#42afa999a2cacd21c1983ee7774ba853aa66e534"
 dependencies = [
  "approx 0.5.0",
  "arrayvec",

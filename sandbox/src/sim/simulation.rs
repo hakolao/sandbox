@@ -610,7 +610,8 @@ impl Simulation {
                             }
                         }
                     }
-                    if pixel_count <= 4 {
+                    // Too small objects will be removed (3 * 3)
+                    if pixel_count <= 9 {
                         Some((id, rb, pixel_data, pos, lin_vel, angle, ang_vel, vec![]))
                     } else if should_update_object {
                         Some((id, rb, pixel_data, pos, lin_vel, angle, ang_vel, bitmap))

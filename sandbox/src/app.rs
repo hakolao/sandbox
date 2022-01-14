@@ -17,7 +17,7 @@ use crate::{
     settings::AppSettings,
     sim::{log_world_performance, Simulation},
     utils::{read_matter_definitions_file, u32_rgba_to_f32_rgba, CanvasMouseState},
-    SIM_CANVAS_SIZE, WORLD_UNIT_SIZE,
+    GRAVITY_SCALE, SIM_CANVAS_SIZE, WORLD_UNIT_SIZE,
 };
 
 #[derive(Debug, PartialEq, Eq, Hash, Copy, Clone)]
@@ -130,6 +130,8 @@ impl Engine<InputAction> for SandboxApp {
             .update_based_on_device_info_and_env(&api.renderer);
         // Toggle fullscreen
         api.renderer.toggle_fullscreen();
+        // Adjust gravity
+        api.physics_world.physics.gravity *= GRAVITY_SCALE;
         Ok(())
     }
 
