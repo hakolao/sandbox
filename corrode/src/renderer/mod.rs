@@ -26,6 +26,7 @@ mod render_test_helper {
     };
 
     pub fn test_setup() -> (Arc<Device>, Arc<Queue>, DebugCallback) {
+        let layers = vec![];
         #[cfg(all(target_os = "macos", debug_assertions))]
         let layers = vec!["VK_LAYER_KHRONOS_validation"];
         #[cfg(all(not(target_os = "macos"), debug_assertions))]
