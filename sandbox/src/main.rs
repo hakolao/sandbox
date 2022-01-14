@@ -37,7 +37,9 @@ use crate::app::{InputAction, SandboxApp};
 
 /// This is an example for using doc comment attributes
 /// Canvas plane scale (1.0 means our world is between -1.0 and 1.0)
+/// WARNING: If you do change this, you need to update map data positions accordingly (e.g. multiply by x)
 pub const WORLD_UNIT_SIZE: f32 = 10.0;
+pub const GRAVITY_SCALE: f32 = 1.0 / (10.0 / WORLD_UNIT_SIZE);
 /// Kernel size x & y
 pub const KERNEL_SIZE: u32 = 32;
 /// Max number of matters

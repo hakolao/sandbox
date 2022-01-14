@@ -2,7 +2,7 @@
 members = ["corrode", "sandbox"]
 
 [patch.crates-io]
-parry2d = { git = "https://github.com/hakolao/parry" }
+parry2d = { git = "https://github.com/hakolao/parry", branch = "try-fixing-crash" }
 
 [profile.dev.package.rapier2d]
 opt-level = 3
