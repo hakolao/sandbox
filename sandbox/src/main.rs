@@ -59,6 +59,9 @@ pub const CELL_OFFSETS_NINE: [Vector2<i32>; 9] = [
     Vector2::new(0, -1),
     Vector2::new(1, -1),
 ];
+/// This affects the shape of objects that have lots of transparency in them.
+/// This being larger than 0 but not too much for example ensures the donut.png image's shape is reasonably good
+pub const DEFORMATION_ALPHA_TRESHOLD: u8 = 20;
 
 lazy_static! {
     /// Number of cells in simulated canvas area

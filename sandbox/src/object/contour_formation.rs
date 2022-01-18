@@ -6,7 +6,7 @@ use contour::contour_rings;
 use crate::{
     object::{MatterPixel, PixelData},
     utils::BitmapImage,
-    CELL_UNIT_SIZE, HALF_CELL,
+    CELL_UNIT_SIZE, DEFORMATION_ALPHA_TRESHOLD, HALF_CELL,
 };
 
 pub fn form_pixel_data_with_contours_from_image(
@@ -26,7 +26,7 @@ pub fn form_pixel_data_with_contours_from_image(
             let index = (y * image.width + x) as usize;
             let flipped_y_index = ((image.height - y - 1) * image.width + x) as usize;
             let alpha = image.data[index * 4 + 3];
-            if alpha == 0 {
+            if alpha < DEFORMATION_ALPHA_TRESHOLD {
                 pixel_data.pixels[flipped_y_index] = MatterPixel {
                     matter: empty_matter,
                     color_index: index,
