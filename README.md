@@ -52,4 +52,5 @@ Run tests & checks with `./run_checks.sh` before pushing & making a PR.
 Run `run_build_dist.sh`.
 
 ### Notes
-I'd be very happy to see improvement suggestions.
+I'd be very happy to see improvement suggestions. This is very unoptimized at this point, thus there are plenty of things to improve on.
+For example, there is barely any parallelization apart from some `par_iter`s.
