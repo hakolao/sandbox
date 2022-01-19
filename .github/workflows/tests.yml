@@ -29,7 +29,7 @@ jobs:
       - name: cargo clippy
         run: cargo clippy --all-targets -- -D warnings
 
-  windows_stable:
+  windows_nightly:
     runs-on: windows-latest
     steps:
       - name: Ninja Install
@@ -41,15 +41,23 @@ jobs:
         with:
           args: install python3 --params "/InstallAllUsers"
       - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          override: true
       - name: Build
         run: cargo build --verbose --release
       - name: Run tests
         run: cargo test --verbose --release
 
-  linux_stable:
+  linux_nightly:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          override: true
       - name: init
         run: sudo apt-get install build-essential git python cmake libvulkan-dev vulkan-utils libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev
       - name: Build
@@ -57,10 +65,14 @@ jobs:
       - name: Run tests
         run: cargo test --verbose --release
 
-  macos_stable:
+  macos_nightly:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          override: true
       - name: Build
         run: cargo build --verbose --release
       - name: Run tests

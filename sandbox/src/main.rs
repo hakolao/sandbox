@@ -1,3 +1,4 @@
+#![feature(map_first_last)]
 #![allow(
     clippy::needless_question_mark,
     clippy::too_many_arguments,
