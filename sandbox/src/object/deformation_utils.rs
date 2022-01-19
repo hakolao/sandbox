@@ -1,54 +1,65 @@
+use std::collections::BTreeSet;
+
 use cgmath::Vector2;
 
-fn depth_first_label_mark(
+/*
+list nodes_to_visit = {root};
+while( nodes_to_visit isn't empty ) {
+  currentnode = nodes_to_visit.take_first();
+  nodes_to_visit.prepend( currentnode.children );
+  //do something
+}
+ */
+fn mark_depth_first_label(
     bitmap: &[f64],
     labels: &mut Vec<u32>,
     width: u32,
     height: u32,
-    x: i32,
-    y: i32,
+    x_in: i32,
+    y_in: i32,
     current_label: u32,
     min_x: &mut i32,
     min_y: &mut i32,
     max_x: &mut i32,
     max_y: &mut i32,
 ) {
-    if x < 0 || x == width as i32 || y < 0 || y == height as i32 {
-        return;
-    };
-    let index = (y * width as i32 + x) as usize;
-    if labels[index] != 0 || bitmap[index] == 0.0 {
-        return;
-    }
-    labels[index] = current_label;
-    // Find maxes
-    *min_x = (*min_x).min(x);
-    *min_y = (*min_y).min(y);
-    *max_x = (*max_x).max(x);
-    *max_y = (*max_y).max(y);
-    for (neigh_x, neigh_y) in &[
-        (x - 1, y - 1),
-        (x, y - 1),
-        (x + 1, y - 1),
-        (x + 1, y),
-        (x + 1, y + 1),
-        (x, y + 1),
-        (x - 1, y + 1),
-        (x - 1, y),
-    ] {
-        depth_first_label_mark(
-            bitmap,
-            labels,
-            width,
-            height,
-            *neigh_x,
-            *neigh_y,
-            current_label,
-            min_x,
-            min_y,
-            max_x,
-            max_y,
-        );
+    let mut to_visit = BTreeSet::new();
+    to_visit.insert((x_in, y_in));
+    while !to_visit.is_empty() {
+        // Get current pixel
+        let (x, y) = to_visit.pop_first().unwrap();
+        // Track min maxes
+        *min_x = (*min_x).min(x);
+        *min_y = (*min_y).min(y);
+        *max_x = (*max_x).max(x);
+        *max_y = (*max_y).max(y);
+        // Label it
+        let index = (y * width as i32 + x) as usize;
+        labels[index] = current_label;
+        // Add neighbors for labeling & inspection if necessary
+        for &(neigh_x, neigh_y) in &[
+            (x - 1, y - 1),
+            (x, y - 1),
+            (x + 1, y - 1),
+            (x + 1, y),
+            (x + 1, y + 1),
+            (x, y + 1),
+            (x - 1, y + 1),
+            (x - 1, y),
+        ] {
+            // The pixel should be labeled and is within bounds. (It wasn't labeled yet, and object isn't empty there)
+            if neigh_x >= 0
+                && neigh_x < width as i32
+                && neigh_y >= 0
+                && neigh_y < height as i32
+                && !to_visit.contains(&(neigh_x, neigh_y))
+            {
+                let neigh_index = (neigh_y * width as i32 + neigh_x) as usize;
+                if labels[neigh_index] == 0 && bitmap[neigh_index] != 0.0 {
+                    to_visit.insert((neigh_x, neigh_y));
+                }
+            };
+        }
     }
 }
 
@@ -72,7 +83,7 @@ pub fn extract_connected_components_from_bitmap(
             let index = (y * width + x) as usize;
             if labels[index] == 0 && bitmap[index] == 1.0 {
                 current_label += 1;
-                depth_first_label_mark(
+                mark_depth_first_label(
                     bitmap,
                     &mut labels,
                     width,
