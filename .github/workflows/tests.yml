@@ -29,7 +29,7 @@ jobs:
       - name: cargo clippy
         run: cargo clippy --all-targets -- -D warnings
 
-  windows_stable:
+  windows_nightly:
     runs-on: windows-latest
     steps:
       - name: Ninja Install
@@ -50,7 +50,7 @@ jobs:
       - name: Run tests
         run: cargo test --verbose --release
 
-  linux_stable:
+  linux_nightly:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -65,7 +65,7 @@ jobs:
       - name: Run tests
         run: cargo test --verbose --release
 
-  macos_stable:
+  macos_nightly:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
