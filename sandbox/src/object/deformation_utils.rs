@@ -2,15 +2,9 @@ use std::collections::BTreeSet;
 
 use cgmath::Vector2;
 
-/*
-list nodes_to_visit = {root};
-while( nodes_to_visit isn't empty ) {
-  currentnode = nodes_to_visit.take_first();
-  nodes_to_visit.prepend( currentnode.children );
-  //do something
-}
- */
-fn mark_depth_first_label(
+/// Performs a depth first search of connected pixels and labels them with current label.
+/// Tracks the connected pixel mins & maxes for bitmap formation purposes later.
+fn mark_connected_pixels_depth_first(
     bitmap: &[f64],
     labels: &mut Vec<u32>,
     width: u32,
@@ -83,7 +77,7 @@ pub fn extract_connected_components_from_bitmap(
             let index = (y * width + x) as usize;
             if labels[index] == 0 && bitmap[index] == 1.0 {
                 current_label += 1;
-                mark_depth_first_label(
+                mark_connected_pixels_depth_first(
                     bitmap,
                     &mut labels,
                     width,
