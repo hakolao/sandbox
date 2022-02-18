@@ -17,34 +17,34 @@ layout(constant_id = 10) const uint state_object = 1;
 // X & Y input as specialization constant
 layout(local_size_x_id = 11, local_size_y_id = 12, local_size_z = 1) in;
 
-layout(set = 0, binding = 0) buffer MatterColorsBuffer {
+layout(set = 0, binding = 0) restrict buffer MatterColorsBuffer {
     uint matter_colors[];
 };
-layout(set = 0, binding = 1) buffer MatterStateBuffer {
+layout(set = 0, binding = 1) restrict buffer MatterStateBuffer {
     uint matter_state[];
 };
-layout(set = 0, binding = 2) buffer BitmapBuffer { uint bitmap[]; };
+layout(set = 0, binding = 2) restrict buffer BitmapBuffer { uint bitmap[]; };
 
 /*
 Matter data chunks
 */
-layout(set = 0, binding = 3) buffer MatterInBuffer0 { uint matter_in0[]; };
-layout(set = 0, binding = 4) buffer MatterOutBuffer0 { uint matter_out0[]; };
-layout(set = 0, binding = 5) buffer ObjectsMatter0 { uint objects_matter0[]; };
+layout(set = 0, binding = 3) restrict buffer MatterInBuffer0 { uint matter_in0[]; };
+layout(set = 0, binding = 4) restrict buffer MatterOutBuffer0 { uint matter_out0[]; };
+layout(set = 0, binding = 5) restrict buffer ObjectsMatter0 { uint objects_matter0[]; };
 
-layout(set = 0, binding = 6) buffer MatterInBuffer1 { uint matter_in1[]; };
-layout(set = 0, binding = 7) buffer MatterOutBuffer1 { uint matter_out1[]; };
-layout(set = 0, binding = 8) buffer ObjectsMatter1 { uint objects_matter1[]; };
+layout(set = 0, binding = 6) restrict buffer MatterInBuffer1 { uint matter_in1[]; };
+layout(set = 0, binding = 7) restrict buffer MatterOutBuffer1 { uint matter_out1[]; };
+layout(set = 0, binding = 8) restrict buffer ObjectsMatter1 { uint objects_matter1[]; };
 
-layout(set = 0, binding = 9) buffer MatterInBuffer2 { uint matter_in2[]; };
-layout(set = 0, binding = 10) buffer MatterOutBuffer2 { uint matter_out2[]; };
-layout(set = 0, binding = 11) buffer ObjectsMatter2 { uint objects_matter2[]; };
+layout(set = 0, binding = 9) restrict buffer MatterInBuffer2 { uint matter_in2[]; };
+layout(set = 0, binding = 10) restrict buffer MatterOutBuffer2 { uint matter_out2[]; };
+layout(set = 0, binding = 11) restrict buffer ObjectsMatter2 { uint objects_matter2[]; };
 
-layout(set = 0, binding = 12) buffer MatterInBuffer3 { uint matter_in3[]; };
-layout(set = 0, binding = 13) buffer MatterOutBuffer3 { uint matter_out3[]; };
-layout(set = 0, binding = 14) buffer ObjectsMatter3 { uint objects_matter3[]; };
+layout(set = 0, binding = 12) restrict buffer MatterInBuffer3 { uint matter_in3[]; };
+layout(set = 0, binding = 13) restrict buffer MatterOutBuffer3 { uint matter_out3[]; };
+layout(set = 0, binding = 14) restrict buffer ObjectsMatter3 { uint objects_matter3[]; };
 
-layout(set = 0, binding = 15) buffer TmpMatter { uint tmp_matter[]; };
+layout(set = 0, binding = 15) restrict buffer TmpMatter { uint tmp_matter[]; };
 
 layout(push_constant) uniform PushConstants {
     ivec2 sim_pos_offset;
