@@ -434,9 +434,9 @@ impl CASimulator {
 
     pub fn update_bitmaps(
         &self,
-        solid_bitmap: &mut Vec<f64>,
-        powder_bitmap: &mut Vec<f64>,
-        liquid_bitmap: &mut Vec<f64>,
+        solid_bitmap: &mut [f64],
+        powder_bitmap: &mut [f64],
+        liquid_bitmap: &mut [f64],
         solids_changed: &mut bool,
         powders_changed: &mut bool,
         liquids_changed: &mut bool,
