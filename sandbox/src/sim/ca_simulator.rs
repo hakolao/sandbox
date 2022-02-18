@@ -589,10 +589,10 @@ impl CASimulator {
     fn dispatch_utility(
         &mut self,
         builder: &mut AutoCommandBufferBuilder<PrimaryAutoCommandBuffer>,
-        bitmap_pipeline: Arc<ComputePipeline>,
+        pipeline: Arc<ComputePipeline>,
         world_chunks: &mut (Vector2<i32>, Vec<GpuChunk>),
     ) -> Result<()> {
-        let pipeline_layout = bitmap_pipeline.layout();
+        let pipeline_layout = pipeline.layout();
         let desc_layout = pipeline_layout.descriptor_set_layouts().get(0).unwrap();
         let (chunk_start, chunks) = world_chunks;
 
@@ -621,7 +621,7 @@ impl CASimulator {
             sim_chunk_start_offset: (*chunk_start).into(),
         };
         builder
-            .bind_pipeline_compute(bitmap_pipeline.clone())
+            .bind_pipeline_compute(pipeline.clone())
             .bind_descriptor_sets(PipelineBindPoint::Compute, pipeline_layout.clone(), 0, set)
             .push_constants(pipeline_layout.clone(), 0, push_constants)
             .dispatch([
