@@ -8,7 +8,7 @@ use vulkano::{
         AutoCommandBufferBuilder, CommandBufferUsage, PrimaryAutoCommandBuffer,
         PrimaryCommandBuffer,
     },
-    descriptor_set::PersistentDescriptorSet,
+    descriptor_set::{PersistentDescriptorSet, WriteDescriptorSet},
     device::Queue,
     pipeline::{ComputePipeline, Pipeline, PipelineBindPoint},
     sync::GpuFuture,
@@ -518,26 +518,39 @@ impl CASimulator {
     ) -> Result<()> {
         let pipeline_layout = pipeline.layout();
         let desc_layout = pipeline_layout.descriptor_set_layouts().get(0).unwrap();
-        let mut desc_set_builder = PersistentDescriptorSet::start(desc_layout.clone());
-        desc_set_builder
-            .add_buffer(self.matter_color_input.clone())?
-            .add_buffer(self.matter_state_input.clone())?
-            .add_buffer(self.matter_weight_input.clone())?
-            .add_buffer(self.matter_dispersion_input.clone())?
-            .add_buffer(self.matter_characteristics_input.clone())?
-            .add_buffer(self.matter_reaction_with_input.clone())?
-            .add_buffer(self.matter_reaction_direction_input.clone())?
-            .add_buffer(self.matter_reaction_probability_input.clone())?
-            .add_buffer(self.matter_reaction_transition_input.clone())?;
         let (chunk_start, chunks) = world_chunks;
-        for chunk in chunks.iter() {
-            desc_set_builder.add_buffer(chunk.matter_in.clone())?;
-            desc_set_builder.add_buffer(chunk.matter_out.clone())?;
-            desc_set_builder.add_buffer(chunk.objects_matter.clone())?;
-            desc_set_builder.add_buffer(chunk.objects_color.clone())?;
-            desc_set_builder.add_image(chunk.image.clone())?;
-        }
-        let set = desc_set_builder.build()?;
+
+        let set = PersistentDescriptorSet::new(desc_layout.clone(), [
+            WriteDescriptorSet::buffer(0, self.matter_color_input.clone()),
+            WriteDescriptorSet::buffer(1, self.matter_state_input.clone()),
+            WriteDescriptorSet::buffer(2, self.matter_weight_input.clone()),
+            WriteDescriptorSet::buffer(3, self.matter_dispersion_input.clone()),
+            WriteDescriptorSet::buffer(4, self.matter_characteristics_input.clone()),
+            WriteDescriptorSet::buffer(5, self.matter_reaction_with_input.clone()),
+            WriteDescriptorSet::buffer(6, self.matter_reaction_direction_input.clone()),
+            WriteDescriptorSet::buffer(7, self.matter_reaction_probability_input.clone()),
+            WriteDescriptorSet::buffer(8, self.matter_reaction_transition_input.clone()),
+            WriteDescriptorSet::buffer(9, chunks[0].matter_in.clone()),
+            WriteDescriptorSet::buffer(10, chunks[0].matter_out.clone()),
+            WriteDescriptorSet::buffer(11, chunks[0].objects_matter.clone()),
+            WriteDescriptorSet::buffer(12, chunks[0].objects_color.clone()),
+            WriteDescriptorSet::image_view(13, chunks[0].image.clone()),
+            WriteDescriptorSet::buffer(14, chunks[1].matter_in.clone()),
+            WriteDescriptorSet::buffer(15, chunks[1].matter_out.clone()),
+            WriteDescriptorSet::buffer(16, chunks[1].objects_matter.clone()),
+            WriteDescriptorSet::buffer(17, chunks[1].objects_color.clone()),
+            WriteDescriptorSet::image_view(18, chunks[1].image.clone()),
+            WriteDescriptorSet::buffer(19, chunks[2].matter_in.clone()),
+            WriteDescriptorSet::buffer(20, chunks[2].matter_out.clone()),
+            WriteDescriptorSet::buffer(21, chunks[2].objects_matter.clone()),
+            WriteDescriptorSet::buffer(22, chunks[2].objects_color.clone()),
+            WriteDescriptorSet::image_view(23, chunks[2].image.clone()),
+            WriteDescriptorSet::buffer(24, chunks[3].matter_in.clone()),
+            WriteDescriptorSet::buffer(25, chunks[3].matter_out.clone()),
+            WriteDescriptorSet::buffer(26, chunks[3].objects_matter.clone()),
+            WriteDescriptorSet::buffer(27, chunks[3].objects_color.clone()),
+            WriteDescriptorSet::image_view(28, chunks[3].image.clone()),
+        ])?;
 
         // Note that we make an assumption here that PCs are same for all our simulation kernel (see `shared.glsl`)
         // hence react_cs::...
@@ -581,19 +594,26 @@ impl CASimulator {
     ) -> Result<()> {
         let pipeline_layout = bitmap_pipeline.layout();
         let desc_layout = pipeline_layout.descriptor_set_layouts().get(0).unwrap();
-        let mut desc_set_builder = PersistentDescriptorSet::start(desc_layout.clone());
-        desc_set_builder
-            .add_buffer(self.matter_color_input.clone())?
-            .add_buffer(self.matter_state_input.clone())?
-            .add_buffer(self.bitmap.clone())?;
         let (chunk_start, chunks) = world_chunks;
-        for chunk in chunks.iter() {
-            desc_set_builder.add_buffer(chunk.matter_in.clone())?;
-            desc_set_builder.add_buffer(chunk.matter_out.clone())?;
-            desc_set_builder.add_buffer(chunk.objects_matter.clone())?;
-        }
-        desc_set_builder.add_buffer(self.tmp_matter.clone())?;
-        let set = desc_set_builder.build()?;
+
+        let set = PersistentDescriptorSet::new(desc_layout.clone(), [
+            WriteDescriptorSet::buffer(0, self.matter_color_input.clone()),
+            WriteDescriptorSet::buffer(1, self.matter_state_input.clone()),
+            WriteDescriptorSet::buffer(2, self.bitmap.clone()),
+            WriteDescriptorSet::buffer(3, chunks[0].matter_in.clone()),
+            WriteDescriptorSet::buffer(4, chunks[0].matter_out.clone()),
+            WriteDescriptorSet::buffer(5, chunks[0].objects_matter.clone()),
+            WriteDescriptorSet::buffer(6, chunks[1].matter_in.clone()),
+            WriteDescriptorSet::buffer(7, chunks[1].matter_out.clone()),
+            WriteDescriptorSet::buffer(8, chunks[1].objects_matter.clone()),
+            WriteDescriptorSet::buffer(9, chunks[2].matter_in.clone()),
+            WriteDescriptorSet::buffer(10, chunks[2].matter_out.clone()),
+            WriteDescriptorSet::buffer(11, chunks[2].objects_matter.clone()),
+            WriteDescriptorSet::buffer(12, chunks[3].matter_in.clone()),
+            WriteDescriptorSet::buffer(13, chunks[3].matter_out.clone()),
+            WriteDescriptorSet::buffer(14, chunks[3].objects_matter.clone()),
+            WriteDescriptorSet::buffer(15, self.tmp_matter.clone()),
+        ])?;
 
         // Note that we make an assumption here that PCs are same for all our simulation kernel (see `shared.glsl`)
         let push_constants = init_cs::ty::PushConstants {
