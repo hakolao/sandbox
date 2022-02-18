@@ -8,9 +8,13 @@ use vulkano::{
         AutoCommandBufferBuilder, CommandBufferUsage, PrimaryAutoCommandBuffer,
         PrimaryCommandBuffer,
     },
-    descriptor_set::PersistentDescriptorSet,
+    descriptor_set::{
+        layout::{DescriptorDesc, DescriptorSetLayout, DescriptorType},
+        PersistentDescriptorSet, WriteDescriptorSet,
+    },
     device::Queue,
-    pipeline::{ComputePipeline, Pipeline, PipelineBindPoint},
+    pipeline::{ComputePipeline, Pipeline, PipelineBindPoint, PipelineLayout},
+    shader::ShaderStages,
     sync::GpuFuture,
 };
 
@@ -113,134 +117,235 @@ impl CASimulator {
             constant_12: KERNEL_SIZE,
         };
 
+        fn storage_buffer_desc() -> DescriptorDesc {
+            DescriptorDesc {
+                ty: DescriptorType::StorageBuffer,
+                descriptor_count: 1,
+                variable_count: false,
+                stages: ShaderStages::all(),
+                immutable_samplers: Vec::new(),
+            }
+        }
+
+        fn image_desc_set() -> DescriptorDesc {
+            DescriptorDesc {
+                ty: DescriptorType::StorageImage,
+                descriptor_count: 1,
+                variable_count: false,
+                stages: ShaderStages::all(),
+                immutable_samplers: Vec::new(),
+            }
+        }
+
+        let sim_pc_requirements = {
+            let shader = fall_empty_cs::load(comp_queue.device().clone())?;
+            shader
+                .entry_point("main")
+                .unwrap()
+                .push_constant_requirements()
+                .cloned()
+        };
+        // See compute_shaders/simulation/includes.glsl for layout
+        let sim_set_layout = DescriptorSetLayout::new(comp_queue.device().clone(), [
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(image_desc_set()),
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(image_desc_set()),
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(image_desc_set()),
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(image_desc_set()),
+        ])?;
+        let sim_pipeline_layout = PipelineLayout::new(
+            comp_queue.device().clone(),
+            [sim_set_layout],
+            sim_pc_requirements,
+        )?;
+
+        let utils_pc_requirements = {
+            let shader = init_cs::load(comp_queue.device().clone())?;
+            shader
+                .entry_point("main")
+                .unwrap()
+                .push_constant_requirements()
+                .cloned()
+        };
+
+        // See compute_shaders/utils/includes.glsl for layout
+        let utils_set_layout = DescriptorSetLayout::new(comp_queue.device().clone(), [
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+            Some(storage_buffer_desc()),
+        ])?;
+
+        let utils_pipeline_layout = PipelineLayout::new(
+            comp_queue.device().clone(),
+            [utils_set_layout],
+            utils_pc_requirements,
+        )?;
+
         let fall_empty_pipeline = {
             let shader = fall_empty_cs::load(comp_queue.device().clone())?;
-            ComputePipeline::new(
+            ComputePipeline::with_pipeline_layout(
                 comp_queue.device().clone(),
                 shader.entry_point("main").unwrap(),
                 &spec_const,
+                sim_pipeline_layout.clone(),
                 None,
-                |_| {},
             )?
         };
         let fall_swap_pipeline = {
             let shader = fall_swap_cs::load(comp_queue.device().clone())?;
-            ComputePipeline::new(
+            ComputePipeline::with_pipeline_layout(
                 comp_queue.device().clone(),
                 shader.entry_point("main").unwrap(),
                 &spec_const,
+                sim_pipeline_layout.clone(),
                 None,
-                |_| {},
             )?
         };
         let rise_empty_pipeline = {
             let shader = rise_empty_cs::load(comp_queue.device().clone())?;
-            ComputePipeline::new(
+            ComputePipeline::with_pipeline_layout(
                 comp_queue.device().clone(),
                 shader.entry_point("main").unwrap(),
                 &spec_const,
+                sim_pipeline_layout.clone(),
                 None,
-                |_| {},
             )?
         };
         let rise_swap_pipeline = {
             let shader = rise_swap_cs::load(comp_queue.device().clone())?;
-            ComputePipeline::new(
+            ComputePipeline::with_pipeline_layout(
                 comp_queue.device().clone(),
                 shader.entry_point("main").unwrap(),
                 &spec_const,
+                sim_pipeline_layout.clone(),
                 None,
-                |_| {},
             )?
         };
         let slide_down_empty_pipeline = {
             let shader = slide_down_empty_cs::load(comp_queue.device().clone())?;
-            ComputePipeline::new(
+            ComputePipeline::with_pipeline_layout(
                 comp_queue.device().clone(),
                 shader.entry_point("main").unwrap(),
                 &spec_const,
+                sim_pipeline_layout.clone(),
                 None,
-                |_| {},
             )?
         };
         let slide_down_swap_pipeline = {
             let shader = slide_down_swap_cs::load(comp_queue.device().clone())?;
-            ComputePipeline::new(
+            ComputePipeline::with_pipeline_layout(
                 comp_queue.device().clone(),
                 shader.entry_point("main").unwrap(),
                 &spec_const,
+                sim_pipeline_layout.clone(),
                 None,
-                |_| {},
             )?
         };
         let horizontal_empty_pipeline = {
             let shader = horizontal_empty_cs::load(comp_queue.device().clone())?;
-            ComputePipeline::new(
+            ComputePipeline::with_pipeline_layout(
                 comp_queue.device().clone(),
                 shader.entry_point("main").unwrap(),
                 &spec_const,
+                sim_pipeline_layout.clone(),
                 None,
-                |_| {},
             )?
         };
         let horizontal_swap_pipeline = {
             let shader = horizontal_swap_cs::load(comp_queue.device().clone())?;
-            ComputePipeline::new(
+            ComputePipeline::with_pipeline_layout(
                 comp_queue.device().clone(),
                 shader.entry_point("main").unwrap(),
                 &spec_const,
+                sim_pipeline_layout.clone(),
                 None,
-                |_| {},
             )?
         };
         let react_pipeline = {
             let shader = react_cs::load(comp_queue.device().clone())?;
-            ComputePipeline::new(
+            ComputePipeline::with_pipeline_layout(
                 comp_queue.device().clone(),
                 shader.entry_point("main").unwrap(),
                 &spec_const,
+                sim_pipeline_layout.clone(),
                 None,
-                |_| {},
             )?
         };
         let color_pipeline = {
             let shader = color_cs::load(comp_queue.device().clone())?;
-            ComputePipeline::new(
+            ComputePipeline::with_pipeline_layout(
                 comp_queue.device().clone(),
                 shader.entry_point("main").unwrap(),
                 &spec_const,
+                sim_pipeline_layout,
                 None,
-                |_| {},
             )?
         };
         let init_pipeline = {
             let shader = init_cs::load(comp_queue.device().clone())?;
-            ComputePipeline::new(
+            ComputePipeline::with_pipeline_layout(
                 comp_queue.device().clone(),
                 shader.entry_point("main").unwrap(),
                 &spec_const,
+                utils_pipeline_layout.clone(),
                 None,
-                |_| {},
             )?
         };
         let finish_pipeline = {
             let shader = finish_cs::load(comp_queue.device().clone())?;
-            ComputePipeline::new(
+            ComputePipeline::with_pipeline_layout(
                 comp_queue.device().clone(),
                 shader.entry_point("main").unwrap(),
                 &spec_const,
+                utils_pipeline_layout.clone(),
                 None,
-                |_| {},
             )?
         };
         let update_bitmap_pipeline = {
             let shader = update_bitmap_cs::load(comp_queue.device().clone())?;
-            ComputePipeline::new(
+            ComputePipeline::with_pipeline_layout(
                 comp_queue.device().clone(),
                 shader.entry_point("main").unwrap(),
                 &spec_const,
+                utils_pipeline_layout,
                 None,
-                |_| {},
             )?
         };
 
@@ -518,26 +623,39 @@ impl CASimulator {
     ) -> Result<()> {
         let pipeline_layout = pipeline.layout();
         let desc_layout = pipeline_layout.descriptor_set_layouts().get(0).unwrap();
-        let mut desc_set_builder = PersistentDescriptorSet::start(desc_layout.clone());
-        desc_set_builder
-            .add_buffer(self.matter_color_input.clone())?
-            .add_buffer(self.matter_state_input.clone())?
-            .add_buffer(self.matter_weight_input.clone())?
-            .add_buffer(self.matter_dispersion_input.clone())?
-            .add_buffer(self.matter_characteristics_input.clone())?
-            .add_buffer(self.matter_reaction_with_input.clone())?
-            .add_buffer(self.matter_reaction_direction_input.clone())?
-            .add_buffer(self.matter_reaction_probability_input.clone())?
-            .add_buffer(self.matter_reaction_transition_input.clone())?;
         let (chunk_start, chunks) = world_chunks;
-        for chunk in chunks.iter() {
-            desc_set_builder.add_buffer(chunk.matter_in.clone())?;
-            desc_set_builder.add_buffer(chunk.matter_out.clone())?;
-            desc_set_builder.add_buffer(chunk.objects_matter.clone())?;
-            desc_set_builder.add_buffer(chunk.objects_color.clone())?;
-            desc_set_builder.add_image(chunk.image.clone())?;
-        }
-        let set = desc_set_builder.build()?;
+
+        let set = PersistentDescriptorSet::new(desc_layout.clone(), [
+            WriteDescriptorSet::buffer(0, self.matter_color_input.clone()),
+            WriteDescriptorSet::buffer(1, self.matter_state_input.clone()),
+            WriteDescriptorSet::buffer(2, self.matter_weight_input.clone()),
+            WriteDescriptorSet::buffer(3, self.matter_dispersion_input.clone()),
+            WriteDescriptorSet::buffer(4, self.matter_characteristics_input.clone()),
+            WriteDescriptorSet::buffer(5, self.matter_reaction_with_input.clone()),
+            WriteDescriptorSet::buffer(6, self.matter_reaction_direction_input.clone()),
+            WriteDescriptorSet::buffer(7, self.matter_reaction_probability_input.clone()),
+            WriteDescriptorSet::buffer(8, self.matter_reaction_transition_input.clone()),
+            WriteDescriptorSet::buffer(9, chunks[0].matter_in.clone()),
+            WriteDescriptorSet::buffer(10, chunks[0].matter_out.clone()),
+            WriteDescriptorSet::buffer(11, chunks[0].objects_matter.clone()),
+            WriteDescriptorSet::buffer(12, chunks[0].objects_color.clone()),
+            WriteDescriptorSet::image_view(13, chunks[0].image.clone()),
+            WriteDescriptorSet::buffer(14, chunks[1].matter_in.clone()),
+            WriteDescriptorSet::buffer(15, chunks[1].matter_out.clone()),
+            WriteDescriptorSet::buffer(16, chunks[1].objects_matter.clone()),
+            WriteDescriptorSet::buffer(17, chunks[1].objects_color.clone()),
+            WriteDescriptorSet::image_view(18, chunks[1].image.clone()),
+            WriteDescriptorSet::buffer(19, chunks[2].matter_in.clone()),
+            WriteDescriptorSet::buffer(20, chunks[2].matter_out.clone()),
+            WriteDescriptorSet::buffer(21, chunks[2].objects_matter.clone()),
+            WriteDescriptorSet::buffer(22, chunks[2].objects_color.clone()),
+            WriteDescriptorSet::image_view(23, chunks[2].image.clone()),
+            WriteDescriptorSet::buffer(24, chunks[3].matter_in.clone()),
+            WriteDescriptorSet::buffer(25, chunks[3].matter_out.clone()),
+            WriteDescriptorSet::buffer(26, chunks[3].objects_matter.clone()),
+            WriteDescriptorSet::buffer(27, chunks[3].objects_color.clone()),
+            WriteDescriptorSet::image_view(28, chunks[3].image.clone()),
+        ])?;
 
         // Note that we make an assumption here that PCs are same for all our simulation kernel (see `shared.glsl`)
         // hence react_cs::...
@@ -576,24 +694,31 @@ impl CASimulator {
     fn dispatch_utility(
         &mut self,
         builder: &mut AutoCommandBufferBuilder<PrimaryAutoCommandBuffer>,
-        bitmap_pipeline: Arc<ComputePipeline>,
+        pipeline: Arc<ComputePipeline>,
         world_chunks: &mut (Vector2<i32>, Vec<GpuChunk>),
     ) -> Result<()> {
-        let pipeline_layout = bitmap_pipeline.layout();
+        let pipeline_layout = pipeline.layout();
         let desc_layout = pipeline_layout.descriptor_set_layouts().get(0).unwrap();
-        let mut desc_set_builder = PersistentDescriptorSet::start(desc_layout.clone());
-        desc_set_builder
-            .add_buffer(self.matter_color_input.clone())?
-            .add_buffer(self.matter_state_input.clone())?
-            .add_buffer(self.bitmap.clone())?;
         let (chunk_start, chunks) = world_chunks;
-        for chunk in chunks.iter() {
-            desc_set_builder.add_buffer(chunk.matter_in.clone())?;
-            desc_set_builder.add_buffer(chunk.matter_out.clone())?;
-            desc_set_builder.add_buffer(chunk.objects_matter.clone())?;
-        }
-        desc_set_builder.add_buffer(self.tmp_matter.clone())?;
-        let set = desc_set_builder.build()?;
+
+        let set = PersistentDescriptorSet::new(desc_layout.clone(), [
+            WriteDescriptorSet::buffer(0, self.matter_color_input.clone()),
+            WriteDescriptorSet::buffer(1, self.matter_state_input.clone()),
+            WriteDescriptorSet::buffer(2, self.bitmap.clone()),
+            WriteDescriptorSet::buffer(3, chunks[0].matter_in.clone()),
+            WriteDescriptorSet::buffer(4, chunks[0].matter_out.clone()),
+            WriteDescriptorSet::buffer(5, chunks[0].objects_matter.clone()),
+            WriteDescriptorSet::buffer(6, chunks[1].matter_in.clone()),
+            WriteDescriptorSet::buffer(7, chunks[1].matter_out.clone()),
+            WriteDescriptorSet::buffer(8, chunks[1].objects_matter.clone()),
+            WriteDescriptorSet::buffer(9, chunks[2].matter_in.clone()),
+            WriteDescriptorSet::buffer(10, chunks[2].matter_out.clone()),
+            WriteDescriptorSet::buffer(11, chunks[2].objects_matter.clone()),
+            WriteDescriptorSet::buffer(12, chunks[3].matter_in.clone()),
+            WriteDescriptorSet::buffer(13, chunks[3].matter_out.clone()),
+            WriteDescriptorSet::buffer(14, chunks[3].objects_matter.clone()),
+            WriteDescriptorSet::buffer(15, self.tmp_matter.clone()),
+        ])?;
 
         // Note that we make an assumption here that PCs are same for all our simulation kernel (see `shared.glsl`)
         let push_constants = init_cs::ty::PushConstants {
@@ -601,7 +726,7 @@ impl CASimulator {
             sim_chunk_start_offset: (*chunk_start).into(),
         };
         builder
-            .bind_pipeline_compute(bitmap_pipeline.clone())
+            .bind_pipeline_compute(pipeline.clone())
             .bind_descriptor_sets(PipelineBindPoint::Compute, pipeline_layout.clone(), 0, set)
             .push_constants(pipeline_layout.clone(), 0, push_constants)
             .dispatch([

@@ -208,8 +208,8 @@ impl GuiState {
                         .on_hover_text("Spreading speed for liquids or gases");
                     ui.collapsing("Characteristics", |ui| {
                         for (val, text, guide, is_selected) in selected_characteristics.iter() {
-                            ui.selectable_label(*is_selected, text)
-                                .on_hover_text(guide)
+                            ui.selectable_label(*is_selected, *text)
+                                .on_hover_text(*guide)
                                 .clicked()
                                 .then(|| {
                                     if *is_selected {
@@ -226,8 +226,8 @@ impl GuiState {
                                 for (val, text, guide, is_selected) in
                                     get_selected_characteristics(reaction.reacts).iter()
                                 {
-                                    ui.selectable_label(*is_selected, text)
-                                        .on_hover_text(guide)
+                                    ui.selectable_label(*is_selected, *text)
+                                        .on_hover_text(*guide)
                                         .clicked()
                                         .then(|| {
                                             if *is_selected {
@@ -246,7 +246,7 @@ impl GuiState {
                                 for (val, text, is_selected) in
                                     get_selected_directions(reaction.direction).iter()
                                 {
-                                    ui.selectable_label(*is_selected, text).clicked().then(|| {
+                                    ui.selectable_label(*is_selected, *text).clicked().then(|| {
                                         if *is_selected {
                                             self.add_matter.reactions[index].direction.remove(*val);
                                         } else {
