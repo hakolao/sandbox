@@ -5,7 +5,8 @@ use rayon::ThreadPool;
 pub struct Physics {
     pub bodies: RigidBodySet,
     pub colliders: ColliderSet,
-    pub joints: JointSet,
+    pub joints: ImpulseJointSet,
+    pub multibody_joints: MultibodyJointSet,
     pub physics_pipeline: PhysicsPipeline,
     pub island_manager: IslandManager,
     pub broad_phase: BroadPhase,
@@ -26,7 +27,8 @@ impl Physics {
     pub fn new() -> Physics {
         let bodies = RigidBodySet::new();
         let colliders = ColliderSet::new();
-        let joints = JointSet::new();
+        let joints = ImpulseJointSet::new();
+        let multibody_joints = MultibodyJointSet::new();
         let integration_parameters = IntegrationParameters::default();
         let physics_pipeline = PhysicsPipeline::new();
         let island_manager = IslandManager::new();
@@ -38,6 +40,7 @@ impl Physics {
             bodies,
             colliders,
             joints,
+            multibody_joints,
             physics_pipeline,
             island_manager,
             broad_phase,
@@ -72,7 +75,7 @@ impl PhysicsWorld {
 
     pub fn step(
         &mut self,
-        thread_pool: &ThreadPool,
+        _thread_pool: &ThreadPool,
         intersection_event_handler: impl Fn(IntersectionEvent),
         contact_event_handler: impl Fn(ContactEvent),
     ) {
@@ -85,27 +88,29 @@ impl PhysicsWorld {
             bodies,
             colliders,
             joints,
+            multibody_joints,
             ccd_solver,
             physics_pipeline,
             query_pipeline,
             ..
         } = &mut self.physics;
         let event_handler = &self.event_handler;
-        thread_pool.install(|| {
-            physics_pipeline.step(
-                gravity,
-                integration_parameters,
-                island_manager,
-                broad_phase,
-                narrow_phase,
-                bodies,
-                colliders,
-                joints,
-                ccd_solver,
-                &(),
-                event_handler,
-            );
-        });
+        // thread_pool.install(|| {
+        physics_pipeline.step(
+            gravity,
+            integration_parameters,
+            island_manager,
+            broad_phase,
+            narrow_phase,
+            bodies,
+            colliders,
+            joints,
+            multibody_joints,
+            ccd_solver,
+            &(),
+            event_handler,
+        );
+        // });
 
         query_pipeline.update(island_manager, bodies, colliders);
 
@@ -123,9 +128,10 @@ impl PhysicsWorld {
             island_manager,
             colliders,
             joints,
+            multibody_joints,
             ..
         } = &mut self.physics;
-        bodies.remove(rb, island_manager, colliders, joints);
+        bodies.remove(rb, island_manager, colliders, joints, multibody_joints);
     }
 
     pub fn rigid_body_at_pos(&self, world_pos: Vector2<f32>) -> Option<&RigidBody> {
