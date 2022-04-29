@@ -8,11 +8,11 @@ pub use line_draw_pipeline::*;
 pub use texture_draw_pipeline::*;
 use vulkano::{
     command_buffer::{AutoCommandBufferBuilder, CommandBufferUsage, SecondaryAutoCommandBuffer},
-    descriptor_set::{layout::DescriptorSetLayout, PersistentDescriptorSet},
+    descriptor_set::{layout::DescriptorSetLayout, PersistentDescriptorSet, WriteDescriptorSet},
     device::Queue,
     image::ImageViewAbstract,
     render_pass::Subpass,
-    sampler::{Filter, MipmapMode, Sampler, SamplerAddressMode},
+    sampler::{Filter, Sampler, SamplerAddressMode, SamplerMipmapMode},
 };
 pub use wireframe_draw_pipeline::*;
 
@@ -36,28 +36,22 @@ pub fn command_buffer_builder(
     Ok(builder)
 }
 
-/// Creates a descriptor set for images
+/// Creates a descriptor set for images with nearest mipmap mode (pixel perfect)
+#[allow(unused)]
 pub fn sampled_image_desc_set(
     gfx_queue: Arc<Queue>,
     layout: &Arc<DescriptorSetLayout>,
     image: Arc<dyn ImageViewAbstract + 'static>,
     sampler_mode: SamplerAddressMode,
 ) -> Result<Arc<PersistentDescriptorSet>> {
-    let sampler = Sampler::new(
-        gfx_queue.device().clone(),
-        Filter::Nearest,
-        Filter::Nearest,
-        MipmapMode::Nearest,
-        sampler_mode,
-        sampler_mode,
-        sampler_mode,
-        0.0,
-        1.0,
-        0.0,
-        0.0,
-    )?;
-    let mut builder = PersistentDescriptorSet::start(layout.clone());
-    builder.add_sampled_image(image.clone(), sampler)?;
-    let set = builder.build()?;
-    Ok(set)
+    let sampler_builder = Sampler::start(gfx_queue.device().clone())
+        .filter(Filter::Nearest)
+        .address_mode(sampler_mode)
+        .mipmap_mode(SamplerMipmapMode::Nearest)
+        .mip_lod_bias(0.0)
+        .lod(0.0..=0.0);
+    let sampler = sampler_builder.build()?;
+    Ok(PersistentDescriptorSet::new(layout.clone(), [
+        WriteDescriptorSet::image_view_sampler(0, image.clone(), sampler),
+    ])?)
 }

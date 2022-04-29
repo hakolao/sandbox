@@ -35,7 +35,7 @@ use vulkano::{
     sync::{FlushError, GpuFuture},
     Version,
 };
-use vulkano_win::VkSurfaceBuild;
+use vulkano_win::create_vk_surface;
 use winit::{
     event_loop::EventLoop,
     window::{Fullscreen, Window, WindowBuilder},
@@ -204,15 +204,14 @@ impl Renderer {
             max_mem_gb,
         );
         let device_type = physical_device.properties().device_type;
-        // Create rendering surface along with window
-        let surface = WindowBuilder::new()
+        let b = WindowBuilder::new()
             .with_inner_size(winit::dpi::LogicalSize::new(
                 opts.window_size[0],
                 opts.window_size[1],
             ))
-            .with_title(opts.title)
-            .build_vk_surface(event_loop, instance.clone())
-            .context("Failed to create vulkan surface & window")?;
+            .with_title(opts.title);
+        let window = b.build(event_loop).unwrap();
+        let surface = create_vk_surface(window, instance.clone()).unwrap();
 
         // Create device
         let (device, graphics_queue, compute_queue) =

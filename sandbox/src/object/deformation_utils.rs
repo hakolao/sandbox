@@ -6,7 +6,7 @@ use cgmath::Vector2;
 /// Tracks the connected pixel mins & maxes for bitmap formation purposes later.
 fn mark_connected_pixels_depth_first(
     bitmap: &[f64],
-    labels: &mut Vec<u32>,
+    labels: &mut [u32],
     width: u32,
     height: u32,
     x_in: i32,

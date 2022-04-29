@@ -14,60 +14,60 @@ layout(constant_id = 10) const uint state_object = 1;
 // X & Y input as specialization constant
 layout(local_size_x_id = 11, local_size_y_id = 12, local_size_z = 1) in;
 
-layout(set = 0, binding = 0) buffer MatterColorsBuffer {
+layout(set = 0, binding = 0) restrict buffer MatterColorsBuffer {
     uint matter_colors[];
 };
-layout(set = 0, binding = 1) buffer MatterStateBuffer {
+layout(set = 0, binding = 1) restrict buffer MatterStateBuffer {
     uint matter_state[];
 };
-layout(set = 0, binding = 2) buffer MatterWeightsBuffer {
+layout(set = 0, binding = 2) restrict buffer MatterWeightsBuffer {
     float matter_weights[];
 };
-layout(set = 0, binding = 3) buffer MatterDispersionBuffer {
+layout(set = 0, binding = 3) restrict buffer MatterDispersionBuffer {
     uint matter_dispersion[];
 };
-layout(set = 0, binding = 4) buffer MatterCharacteristicsBuffer {
+layout(set = 0, binding = 4) restrict buffer MatterCharacteristicsBuffer {
     uint matter_characteristics[];
 };
-layout(set = 0, binding = 5) buffer MatterReactionWithBuffer {
+layout(set = 0, binding = 5) restrict buffer MatterReactionWithBuffer {
     uint matter_reaction_with[];
 };
-layout(set = 0, binding = 6) buffer MatterReactionDirectionBuffer {
+layout(set = 0, binding = 6) restrict buffer MatterReactionDirectionBuffer {
     uint matter_reaction_direction[];
 };
-layout(set = 0, binding = 7) buffer MatterReactionProbabilityBuffer {
+layout(set = 0, binding = 7) restrict buffer MatterReactionProbabilityBuffer {
     float matter_reaction_probability[];
 };
-layout(set = 0, binding = 8) buffer MatterReactionTransitionBuffer {
+layout(set = 0, binding = 8) restrict buffer MatterReactionTransitionBuffer {
     uint matter_reaction_transition[];
 };
 
 /*
 Matter data chunks
 */
-layout(set = 0, binding = 9) buffer MatterInBuffer0 { uint matter_in0[]; };
-layout(set = 0, binding = 10) writeonly buffer MatterOutBuffer0 { uint matter_out0[]; };
-layout(set = 0, binding = 11) buffer ObjectsMatter0 { uint objects_matter0[]; };
-layout(set = 0, binding = 12) buffer ObjectsColor0 { uint objects_color0[]; };
-layout(set = 0, binding = 13, rgba8) uniform writeonly image2D canvas_img0;
+layout(set = 0, binding = 9) restrict buffer MatterInBuffer0 { uint matter_in0[]; };
+layout(set = 0, binding = 10) restrict writeonly buffer MatterOutBuffer0 { uint matter_out0[]; };
+layout(set = 0, binding = 11) restrict buffer ObjectsMatter0 { uint objects_matter0[]; };
+layout(set = 0, binding = 12) restrict buffer ObjectsColor0 { uint objects_color0[]; };
+layout(set = 0, binding = 13, rgba8) restrict uniform writeonly image2D canvas_img0;
 
-layout(set = 0, binding = 14) buffer MatterInBuffer1 { uint matter_in1[]; };
-layout(set = 0, binding = 15) writeonly buffer MatterOutBuffer1 { uint matter_out1[]; };
-layout(set = 0, binding = 16) buffer ObjectsMatter1 { uint objects_matter1[]; };
-layout(set = 0, binding = 17) buffer ObjectsColor1 { uint objects_color1[]; };
-layout(set = 0, binding = 18, rgba8) uniform writeonly image2D canvas_img1;
+layout(set = 0, binding = 14) restrict buffer MatterInBuffer1 { uint matter_in1[]; };
+layout(set = 0, binding = 15) restrict writeonly buffer MatterOutBuffer1 { uint matter_out1[]; };
+layout(set = 0, binding = 16) restrict buffer ObjectsMatter1 { uint objects_matter1[]; };
+layout(set = 0, binding = 17) restrict buffer ObjectsColor1 { uint objects_color1[]; };
+layout(set = 0, binding = 18, rgba8) restrict uniform writeonly image2D canvas_img1;
 
-layout(set = 0, binding = 19) buffer MatterInBuffer2 { uint matter_in2[]; };
-layout(set = 0, binding = 20) writeonly buffer MatterOutBuffer2 { uint matter_out2[]; };
-layout(set = 0, binding = 21) buffer ObjectsMatter2 { uint objects_matter2[]; };
-layout(set = 0, binding = 22) buffer ObjectsColor2 { uint objects_color2[]; };
-layout(set = 0, binding = 23, rgba8) uniform writeonly image2D canvas_img2;
+layout(set = 0, binding = 19) restrict buffer MatterInBuffer2 { uint matter_in2[]; };
+layout(set = 0, binding = 20) restrict writeonly buffer MatterOutBuffer2 { uint matter_out2[]; };
+layout(set = 0, binding = 21) restrict buffer ObjectsMatter2 { uint objects_matter2[]; };
+layout(set = 0, binding = 22) restrict buffer ObjectsColor2 { uint objects_color2[]; };
+layout(set = 0, binding = 23, rgba8) restrict uniform writeonly image2D canvas_img2;
 
-layout(set = 0, binding = 24) buffer MatterInBuffer3 { uint matter_in3[]; };
-layout(set = 0, binding = 25) writeonly buffer MatterOutBuffer3 { uint matter_out3[]; };
-layout(set = 0, binding = 26) buffer ObjectsMatter3 { uint objects_matter3[]; };
-layout(set = 0, binding = 27) buffer ObjectsColor3 { uint objects_color3[]; };
-layout(set = 0, binding = 28, rgba8) uniform writeonly image2D canvas_img3;
+layout(set = 0, binding = 24) restrict buffer MatterInBuffer3 { uint matter_in3[]; };
+layout(set = 0, binding = 25) restrict writeonly buffer MatterOutBuffer3 { uint matter_out3[]; };
+layout(set = 0, binding = 26) restrict buffer ObjectsMatter3 { uint objects_matter3[]; };
+layout(set = 0, binding = 27) restrict buffer ObjectsColor3 { uint objects_color3[]; };
+layout(set = 0, binding = 28, rgba8) restrict uniform writeonly image2D canvas_img3;
 
 layout(push_constant) uniform PushConstants {
     float seed;
