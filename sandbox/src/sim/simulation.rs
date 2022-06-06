@@ -139,7 +139,7 @@ impl Simulation {
 
         self.physics_timer.start();
         api.physics_world
-            .step(&api.thread_pool, |_intersect_event| {}, |_contact_event| {});
+            .step(&api.thread_pool, |_collision_event| {});
         self.update_dynamic_physics_objects(api)?;
         self.physics_timer.time_it();
 

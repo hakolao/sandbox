@@ -56,28 +56,24 @@ impl Physics {
 pub struct PhysicsWorld {
     pub physics: Physics,
     event_handler: ChannelEventCollector,
-    contact_recv: crossbeam::channel::Receiver<ContactEvent>,
-    intersection_recv: crossbeam::channel::Receiver<IntersectionEvent>,
+    collision_recv: crossbeam::channel::Receiver<CollisionEvent>,
 }
 
 impl PhysicsWorld {
     pub fn new() -> PhysicsWorld {
-        let (contact_send, contact_recv) = crossbeam::channel::unbounded();
-        let (intersection_send, intersection_recv) = crossbeam::channel::unbounded();
-        let event_handler = ChannelEventCollector::new(intersection_send, contact_send);
+        let (collision_send, collision_recv) = crossbeam::channel::unbounded();
+        let event_handler = ChannelEventCollector::new(collision_send);
         PhysicsWorld {
             physics: Physics::new(),
             event_handler,
-            contact_recv,
-            intersection_recv,
+            collision_recv,
         }
     }
 
     pub fn step(
         &mut self,
         _thread_pool: &ThreadPool,
-        intersection_event_handler: impl Fn(IntersectionEvent),
-        contact_event_handler: impl Fn(ContactEvent),
+        collision_event_handler: impl Fn(CollisionEvent),
     ) {
         let Physics {
             gravity,
@@ -114,11 +110,8 @@ impl PhysicsWorld {
 
         query_pipeline.update(island_manager, bodies, colliders);
 
-        while let Ok(intersection_event) = self.intersection_recv.try_recv() {
-            intersection_event_handler(intersection_event);
-        }
-        while let Ok(contact_event) = self.contact_recv.try_recv() {
-            contact_event_handler(contact_event);
+        while let Ok(contact_event) = self.collision_recv.try_recv() {
+            collision_event_handler(contact_event);
         }
     }
 
@@ -131,7 +124,14 @@ impl PhysicsWorld {
             multibody_joints,
             ..
         } = &mut self.physics;
-        bodies.remove(rb, island_manager, colliders, joints, multibody_joints);
+        bodies.remove(
+            rb,
+            island_manager,
+            colliders,
+            joints,
+            multibody_joints,
+            true,
+        );
     }
 
     pub fn rigid_body_at_pos(&self, world_pos: Vector2<f32>) -> Option<&RigidBody> {

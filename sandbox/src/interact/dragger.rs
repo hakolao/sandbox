@@ -53,7 +53,7 @@ impl EditorDragger {
                     k * offset_to_mouse.x - b * prev_lin_vel.x,
                     k * offset_to_mouse.y - b * prev_lin_vel.y
                 ];
-                rigid_body.apply_force_at_point(drag_force, point![drag_pos.x, drag_pos.y], true);
+                rigid_body.add_force_at_point(drag_force, point![drag_pos.x, drag_pos.y], true);
                 // Damp angular velocity
                 let angvel = rigid_body.angvel();
                 rigid_body.set_angvel(angvel * 0.95, false);
