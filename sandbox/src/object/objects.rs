@@ -55,7 +55,7 @@ pub type InvisibleObject = (RigidBodyHandle, Position, Angle);
 
 /// Utility function to update dynamic pixel object params based on rigid body
 pub(crate) fn update_after_physics(
-    rb: &RigidBody,
+    rb: &mut RigidBody,
     pos: &mut Vector2<f32>,
     lin_vel: &mut Vector2<f32>,
     angle: &mut f32,
@@ -64,6 +64,10 @@ pub(crate) fn update_after_physics(
     if rb.is_sleeping() {
         return;
     }
+    // Need to reset user forces first
+    rb.reset_forces(true);
+    rb.reset_torques(true);
+
     let phys_pos = rb.position();
     let phys_angle = phys_pos.rotation.angle();
     let lv = rb.linvel();

@@ -4,7 +4,7 @@ use cgmath::{MetricSpace, Vector2};
 
 use crate::sim::canvas_pos_to_world_pos;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CanvasDrawState {
     pub current: Option<Vector2<i32>>,
     pub prev: Option<Vector2<i32>>,
