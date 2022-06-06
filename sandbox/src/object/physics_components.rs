@@ -43,7 +43,7 @@ pub fn collider_from_polylines(vertices: &[Vector2<f64>]) -> Collider {
         .collect();
     ColliderBuilder::polyline(verts, None)
         .active_collision_types(ActiveCollisionTypes::default())
-        .active_events(ActiveEvents::CONTACT_EVENTS | ActiveEvents::INTERSECTION_EVENTS)
+        .active_events(ActiveEvents::COLLISION_EVENTS)
         .build()
 }
 
@@ -54,7 +54,7 @@ pub fn collider_sensor_from_polylines(vertices: &[Vector2<f64>]) -> Collider {
         .collect();
     ColliderBuilder::polyline(verts, None)
         .sensor(true)
-        .active_events(ActiveEvents::INTERSECTION_EVENTS)
+        .active_events(ActiveEvents::empty())
         .build()
 }
 
@@ -72,7 +72,7 @@ impl DynamicRigidbody {
         ang_vel: f32,
         colliders: Vec<Collider>,
     ) -> RigidBodyHandle {
-        let rigid_body = RigidBodyBuilder::new_dynamic()
+        let rigid_body = RigidBodyBuilder::dynamic()
             .translation(vector![position.x, position.y])
             .rotation(rotation)
             .linvel(vector![lin_vel.x, lin_vel.y])
@@ -99,7 +99,7 @@ impl SensorRigidbody {
         rotation: f32,
         colliders: Vec<Collider>,
     ) -> RigidBodyHandle {
-        let rigid_body = RigidBodyBuilder::new_kinematic_position_based()
+        let rigid_body = RigidBodyBuilder::kinematic_position_based()
             .translation(vector![position.x, position.y])
             .rotation(rotation)
             .user_data(u64::from(id.to_bits()) as u128)
@@ -124,7 +124,7 @@ impl StaticRigidbody {
         rotation: f32,
         colliders: Vec<Collider>,
     ) -> RigidBodyHandle {
-        let rigid_body = RigidBodyBuilder::new_static()
+        let rigid_body = RigidBodyBuilder::fixed()
             .translation(vector![position.x, position.y])
             .rotation(rotation)
             .user_data(u64::from(id.to_bits()) as u128)
