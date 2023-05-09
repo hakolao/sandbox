@@ -1,4 +1,3 @@
-#![feature(map_first_last)]
 #![allow(
     clippy::needless_question_mark,
     clippy::too_many_arguments,
@@ -42,7 +41,7 @@ use crate::app::{InputAction, SandboxApp};
 pub const WORLD_UNIT_SIZE: f32 = 10.0;
 pub const GRAVITY_SCALE: f32 = 1.0 / (10.0 / WORLD_UNIT_SIZE);
 /// Kernel size x & y
-pub const KERNEL_SIZE: u32 = 32;
+pub const KERNEL_SIZE: u32 = 8;
 /// Max number of matters
 pub const MAX_NUM_MATTERS: u32 = 256;
 pub const GPU_CHUNKS_NUM_SIDE: u32 = 6;
