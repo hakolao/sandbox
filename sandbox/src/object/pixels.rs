@@ -87,11 +87,7 @@ impl PixelData {
                 let y = y - pixel_start.y;
                 let pixel_index = (y * width as i32 + x) as usize;
                 pixel_data.pixels[pixel_index] = old_pixel_data.pixels[old_index];
-                if new_bitmap[pixel_index] != 1.0 {
-                    pixel_data.pixels[pixel_index].is_alive = false;
-                } else {
-                    pixel_data.pixels[pixel_index].is_alive = true;
-                }
+                pixel_data.pixels[pixel_index].is_alive = new_bitmap[pixel_index] == 1.0;
             }
         }
         pixel_data

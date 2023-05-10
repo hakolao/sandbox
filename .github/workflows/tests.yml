@@ -59,6 +59,8 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           shared-key: "${{ runner.os }}-rust-linux"
+      - name: Init
+        run: sudo apt-get install build-essential git python cmake libvulkan-dev vulkan-utils libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev
       - name: Build
         run: cargo build --verbose
       - name: Run tests
