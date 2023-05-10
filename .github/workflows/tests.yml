@@ -14,7 +14,7 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: nightly
@@ -31,10 +31,14 @@ jobs:
       - name: cargo clippy
         run: cargo clippy --all-targets -- -D warnings
 
-  windows_stable:
+  windows_nightly:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          override: true
       - name: Rust Windows Cache
         uses: Swatinem/rust-cache@v2
         with:
@@ -43,10 +47,14 @@ jobs:
         run: cargo build --verbose
       - name: Run tests
         run: cargo test --verbose
-  linux_stable:
+  linux_nightly:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          override: true
       - name: Rust Linux Cache
         uses: Swatinem/rust-cache@v2
         with:
@@ -55,10 +63,14 @@ jobs:
         run: cargo build --verbose
       - name: Run tests
         run: cargo test --verbose
-  macos_stable:
+  macos_nightly:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          override: true
       - name: Rust Macos Cache
         uses: Swatinem/rust-cache@v2
         with:
