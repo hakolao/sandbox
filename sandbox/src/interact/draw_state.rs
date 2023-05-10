@@ -137,7 +137,6 @@ impl CanvasDrawState {
         let current = self.current.unwrap();
         if let Some(prev_pos) = self.prev {
             line_drawing::Bresenham::new((prev_pos.x, prev_pos.y), (current.x, current.y))
-                .into_iter()
                 .map(|pos| Vector2::new(pos.0, pos.1))
                 .collect()
         } else {

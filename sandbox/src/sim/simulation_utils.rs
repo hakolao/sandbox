@@ -119,8 +119,8 @@ pub fn get_collider_lines(collider: &Collider, color: [f32; 4]) -> Vec<Line> {
                         let offset = collider.translation().xy();
                         let offset = Vector2::new(offset[0], offset[1]);
                         lines.push(Line(
-                            Vector2::new(p1.x as f32, p1.y as f32) + offset,
-                            Vector2::new(p2.x as f32, p2.y as f32) + offset,
+                            Vector2::new(p1.x, p1.y) + offset,
+                            Vector2::new(p2.x, p2.y) + offset,
                             color,
                         ));
                     } else {
@@ -135,8 +135,8 @@ pub fn get_collider_lines(collider: &Collider, color: [f32; 4]) -> Vec<Line> {
                         let offset = collider.translation().xy();
                         let offset = Vector2::new(offset[0], offset[1]);
                         lines.push(Line(
-                            Vector2::new(p1.x as f32, p1.y as f32) + offset,
-                            Vector2::new(p2.x as f32, p2.y as f32) + offset,
+                            Vector2::new(p1.x, p1.y) + offset,
+                            Vector2::new(p2.x, p2.y) + offset,
                             color,
                         ));
                     }
@@ -158,8 +158,8 @@ pub fn get_collider_lines(collider: &Collider, color: [f32; 4]) -> Vec<Line> {
             let offset = collider.translation().xy();
             let offset = Vector2::new(offset[0], offset[1]);
             lines.push(Line(
-                Vector2::new(p1.x as f32, p1.y as f32) + offset,
-                Vector2::new(p2.x as f32, p2.y as f32) + offset,
+                Vector2::new(p1.x, p1.y) + offset,
+                Vector2::new(p2.x, p2.y) + offset,
                 color,
             ));
         }
@@ -172,22 +172,22 @@ pub fn get_collider_lines(collider: &Collider, color: [f32; 4]) -> Vec<Line> {
             let p1 = rotate_radians(Vector2::new(t.a[0], t.a[1]), collider.rotation().angle());
             let p2 = rotate_radians(Vector2::new(t.b[0], t.b[1]), collider.rotation().angle());
             lines.push(Line(
-                Vector2::new(p1.x as f32, p1.y as f32) + offset,
-                Vector2::new(p2.x as f32, p2.y as f32) + offset,
+                Vector2::new(p1.x, p1.y) + offset,
+                Vector2::new(p2.x, p2.y) + offset,
                 color,
             ));
             let p1 = rotate_radians(Vector2::new(t.b[0], t.b[1]), collider.rotation().angle());
             let p2 = rotate_radians(Vector2::new(t.c[0], t.c[1]), collider.rotation().angle());
             lines.push(Line(
-                Vector2::new(p1.x as f32, p1.y as f32) + offset,
-                Vector2::new(p2.x as f32, p2.y as f32) + offset,
+                Vector2::new(p1.x, p1.y) + offset,
+                Vector2::new(p2.x, p2.y) + offset,
                 color,
             ));
             let p1 = rotate_radians(Vector2::new(t.c[0], t.c[1]), collider.rotation().angle());
             let p2 = rotate_radians(Vector2::new(t.a[0], t.a[1]), collider.rotation().angle());
             lines.push(Line(
-                Vector2::new(p1.x as f32, p1.y as f32) + offset,
-                Vector2::new(p2.x as f32, p2.y as f32) + offset,
+                Vector2::new(p1.x, p1.y) + offset,
+                Vector2::new(p2.x, p2.y) + offset,
                 color,
             ));
         }
@@ -239,7 +239,6 @@ pub fn get_alive_pixels(
     let half_w = (((w as f32 + 1.0) / 2.0) - 1.0).round() as i32;
     let half_h = (((h as f32 + 1.0) / 2.0) - 1.0).round() as i32;
     (0..(h * w))
-        .into_iter()
         .filter_map(|pixel_index| {
             let x = pixel_index % w;
             let y = pixel_index / w;

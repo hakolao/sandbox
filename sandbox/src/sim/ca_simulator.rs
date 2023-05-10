@@ -426,7 +426,7 @@ impl CASimulator {
                 write_matter_reaction_probability_input[table_index + j] =
                     matter.reactions[j].probability;
                 write_matter_reaction_transition_input[table_index + j] =
-                    matter.reactions[j].becomes as u32;
+                    matter.reactions[j].becomes;
             }
         }
         Ok(())
@@ -597,7 +597,7 @@ impl CASimulator {
     ) -> Result<()> {
         self.dispersion_dir = direction;
         for dispersion_step in 0..dispersion_steps {
-            self.dispersion_step = dispersion_step as u32;
+            self.dispersion_step = dispersion_step;
             self.dispatch(
                 builder,
                 self.horizontal_empty_pipeline.clone(),
@@ -662,7 +662,7 @@ impl CASimulator {
         let push_constants = react_cs::ty::PushConstants {
             seed: self.seed,
             sim_step: self.sim_steps as u32,
-            move_step: self.move_step as u32,
+            move_step: self.move_step,
             dispersion_step: self.dispersion_step,
             dispersion_dir: self.dispersion_dir,
             sim_pos_offset: self.sim_pos_offset.into(),

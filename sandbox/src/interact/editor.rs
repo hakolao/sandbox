@@ -362,7 +362,6 @@ impl Editor {
 
 pub fn gui_texture_rgba_data(matter: &MatterDefinition, dimensions: (usize, usize)) -> Vec<u8> {
     (0..(dimensions.0 * dimensions.1))
-        .into_iter()
         .map(|_| variated_color(matter.color.to_be_bytes()))
         .flatten()
         .collect()

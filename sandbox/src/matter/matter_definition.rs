@@ -124,10 +124,12 @@ impl MatterDefinitions {
 
 pub fn validate_matter_definitions(matter_definitions: &MatterDefinitions) {
     for (i, m) in matter_definitions.definitions.iter().enumerate() {
-        if m.id as u32 != i as u32 {
+        if m.id != i as u32 {
             panic!(
                 "Invalid matter definition, definition {}: id {} does not equal matter id index {}",
-                m.name, m.id as u32, i as u32
+                m.name,
+                { m.id },
+                i as u32
             );
         }
         if m.reactions

@@ -711,7 +711,7 @@ impl Simulation {
                 (
                     create_boundary_object_data(
                         self.camera_pos,
-                        *bitmap,
+                        bitmap,
                         *state == MatterState::Liquid,
                     ),
                     *state,

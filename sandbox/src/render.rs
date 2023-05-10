@@ -36,7 +36,7 @@ fn get_boundary_contour_lines(
 pub fn draw_canvas(simulation: &Simulation, draw_pass: &mut DrawPass) -> Result<()> {
     for chunk in simulation.chunk_manager.get_chunks_for_render() {
         let chunk_pos =
-            Vector2::new(chunk.0.x as f32, chunk.0.y as f32) * WORLD_UNIT_SIZE as f32 - *HALF_CELL;
+            Vector2::new(chunk.0.x as f32, chunk.0.y as f32) * WORLD_UNIT_SIZE - *HALF_CELL;
         let chunk_image = chunk.1.image.clone();
         draw_pass.draw_texture(
             chunk_pos,

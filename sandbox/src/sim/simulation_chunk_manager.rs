@@ -403,7 +403,7 @@ impl SimulationChunkManager {
         .unwrap();
 
         let filename = format!("chunk_{}_{}.png", chunk_pos.x, chunk_pos.y);
-        let image_path = map_dir.join(&filename);
+        let image_path = map_dir.join(filename);
         image.save(image_path).unwrap();
 
         Ok(())
